@@ -419,6 +419,116 @@
             }
         }
 
+        .global-loader {
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(2px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .global-loader.active {
+            display: flex;
+        }
+
+        /* Loader Box */
+        .loader-content {
+            text-align: center;
+            background: white;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            border: 1px solid var(--border-color);
+            min-width: 200px;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Spinner */
+        .loader-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        /* Text */
+        .loader-text {
+            font-size: 14px;
+            color: #4b5563;
+            font-weight: 500;
+        }
+
+        /* Button Loading State */
+        .btn-loading {
+            position: relative;
+            color: transparent !important;
+        }
+
+        .btn-loading::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        /* Clean Spin Animation */
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Small Loader */
+        .small-loader {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        /* Shimmer */
+        .shimmer {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -200% 0;
+            }
+
+            100% {
+                background-position: 200% 0;
+            }
+        }
+
         /* Form styles */
         .form-group {
             margin-bottom: 1rem;
@@ -1269,32 +1379,74 @@
             display: block;
         }
 
-        .period-dropdown-item {
-            padding: 10px 14px;
+        /* User Dropdown Styles */
+        .user-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .user-avatar.dropdown-toggle {
             cursor: pointer;
-            font-size: 13px;
-            border: none;
-            background: none;
-            width: 100%;
-            text-align: left;
+            transition: all 0.2s;
+        }
+
+        .user-avatar.dropdown-toggle:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            min-width: 180px;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            padding: 8px 0;
+            margin-top: 8px;
+            z-index: 1000;
+            display: none;
+        }
+
+        .dropdown-menu.show {
             display: block;
         }
 
-        .period-dropdown-item:hover {
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
+            color: #1F2937;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 400;
+            transition: all 0.2s;
+            background: none;
+            border: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .dropdown-item:hover {
             background: #F3F4F6;
+            color: var(--primary-color);
         }
 
-        .period-dropdown-item:first-child {
-            border-radius: 8px 8px 0 0;
+        .dropdown-item.text-danger {
+            color: var(--danger-color) !important;
         }
 
-        .period-dropdown-item:last-child {
-            border-radius: 0 0 8px 8px;
+        .dropdown-item.text-danger:hover {
+            background: #FEE2E2;
         }
 
-        .period-dropdown-item.active {
-            background: var(--primary-color);
-            color: white;
+        .dropdown-divider {
+            height: 1px;
+            background: var(--border-color);
+            margin: 4px 0;
+            border: none;
         }
 
         /* Modal Styles */
@@ -1921,34 +2073,19 @@ $staffList = $person['available_staff'] ?? [];
     <!-- Sidebar -->
     <?php include "../sidebar.php"; ?>
 
+
+    <div class="global-loader" id="globalLoader">
+        <div class="loader-content">
+            <div class="loader-spinner"></div>
+            <div class="loader-text" id="loaderText">
+                Loading Dashboard...
+            </div>
+        </div>
+    </div>
     <!-- Main Content -->
     <div class="main-content">
         <!-- Header -->
-        <div class="top-header">
-            <div class="header-content">
-                <div class="header-title">
-                    <h1>Sales & Leads Dashboard</h1>
-                    <small>Track all sales & contacts in one place</small>
-                </div>
-                <div class="header-search">
-                    <div class="search-wrapper">
-                        <i class="bi bi-search"></i>
-                        <input type="text" placeholder="Search leads, contacts, accounts, deals...">
-                    </div>
-                </div>
-                <div class="header-actions">
-                    <button class="btn-add">
-                        <i class="bi bi-plus-lg"></i>
-                        Add
-                    </button>
-                    <button class="btn-icon">
-                        <i class="bi bi-bell"></i>
-                        <span class="notification-badge">3</span>
-                    </button>
-                    <div class="user-avatar">AS</div>
-                </div>
-            </div>
-        </div>
+        <?php include "../header.php"; ?>
         <br>
 
         <!-- Filter Bar -->
@@ -2716,7 +2853,7 @@ $staffList = $person['available_staff'] ?? [];
     <?php
 
     ?>
-<script src="../api.js"></script>
+    <script src="../api.js"></script>
 
 
     <script>
@@ -2773,7 +2910,7 @@ $staffList = $person['available_staff'] ?? [];
         let selectedDealsLostReason = '';
         let selectedDealsWonType = '';
 
-        let invoiceItemsInclude = 1; // 1 = included, 0 = excluded
+        let invoiceItemsInclude = 1;
         let currentInvoiceUserId = null;
         let currentInvoiceId = null;
 
@@ -2781,28 +2918,29 @@ $staffList = $person['available_staff'] ?? [];
 
 
 
+        // Update loadDashboard_new function
         async function loadDashboard_new() {
             try {
+                showLoader('Loading Dashboard...');
 
                 const result = await loadOverdueFollowups();
 
                 if (!result) return;
 
                 const { data, header_card, contacts } = result;
-                // console.log("Header card data:", contacts);
-                // console.log("Table data:", data);
                 allDueCards = header_card?.followups?.due || [];
                 allTasks = data?.followups || [];
-                // contacts = data?.contacts || [];
-
                 filteredTasks = allTasks;
+
                 getSourceStatusData(contacts);
                 headerCards(allDueCards);
                 renderTasks(currentPage);
 
-                // getDealsCard(deals);
             } catch (error) {
                 console.error('Error loading dashboard:', error);
+                softAlert('Error loading dashboard', 'error');
+            } finally {
+                hideLoader();
             }
         }
 
@@ -2912,9 +3050,65 @@ $staffList = $person['available_staff'] ?? [];
         //     console.log(getFormValue);
         // }
 
+        function showLoader(text = 'Loading Dashboard...') {
+            const loader = document.getElementById('globalLoader');
+            const loaderText = document.getElementById('loaderText');
+
+            if (loader && loaderText) {
+                loaderText.textContent = text;
+                loader.classList.add('active');
+                document.body.style.overflow = 'hidden'; // Prevent scrolling
+            }
+        }
+
+        function hideLoader() {
+            const loader = document.getElementById('globalLoader');
+            if (loader) {
+                loader.classList.remove('active');
+                document.body.style.overflow = ''; // Restore scrolling
+            }
+        }
+
+        function setButtonLoading(button, isLoading) {
+            if (!button) return;
+
+            if (isLoading) {
+                button.classList.add('btn-loading');
+                button.disabled = true;
+            } else {
+                button.classList.remove('btn-loading');
+                button.disabled = false;
+            }
+        }
+
+        const originalCallApi = window.callApi;
+        window.callApi = async function (endpoint, params = {}, method = 'GET') {
+            // Show loader for major API calls (excluding small ones)
+            const showGlobalLoader = !['followup', 'note', 'call', 'log'].includes(endpoint);
+
+            if (showGlobalLoader) {
+                showLoader('Fetching data...');
+            }
+
+            try {
+                const result = await originalCallApi(endpoint, params, method);
+                return result;
+            } catch (error) {
+                console.error('API Error:', error);
+                throw error;
+            } finally {
+                if (showGlobalLoader) {
+                    setTimeout(hideLoader, 300); // Small delay for better UX
+                }
+            }
+        };
 
         async function loadKPIReport({ sales_person, date_from, date_to }) {
             try {
+                const getReportBtn = document.getElementById('getReportBtn');
+                setButtonLoading(getReportBtn, true);
+                showLoader('Generating Report...');
+
                 currentFilters = {
                     sales_person,
                     date_from,
@@ -2935,16 +3129,12 @@ $staffList = $person['available_staff'] ?? [];
                     })
                 ]);
 
-                // console.log(adminRes);
-
+                // Your existing processing code...
                 if (!adminRes && !dealRes) return;
 
-                /* ---------- Admin Report KPIs ---------- */
-                // const funnel_value = adminRes?.staff?.[0]
                 const adminKpis = adminRes?.staff?.[0];
                 const emp_target = adminRes?.staff?.[0]?.emp_targets;
                 const activity = adminRes?.staff?.activity;
-                // console.log(emp_target);
 
                 if (adminKpis) {
                     renderKPICards(adminKpis);
@@ -2955,23 +3145,14 @@ $staffList = $person['available_staff'] ?? [];
                     const quarterWiseTargets = convertToQuarterWise(emp_target);
                     renderTargetsTable(quarterWiseTargets);
                     performance_overview(emp_target);
-                } else {
-                    console.warn('Admin KPI data not found');
                 }
-
-
-                /* ---------- Deal KPIs ---------- */
-                // const dealKpis = dealRes;
-                // if (!dealKpis) {
-                //     console.warn('Deal KPI data not found');
-                // } else {
-                //     getDealsCard(dealKpis);
-                // }
-
-
 
             } catch (error) {
                 console.error("KPI API error:", error);
+                softAlert('Error loading report. Please try again.', 'error');
+            } finally {
+                setButtonLoading(document.getElementById('getReportBtn'), false);
+                hideLoader();
             }
         }
 
@@ -3479,6 +3660,11 @@ $staffList = $person['available_staff'] ?? [];
             // Show loading
             document.getElementById('loading').style.display = 'block';
             document.getElementById('sidebar-table').style.display = 'none';
+            document.getElementById('sidebar-title').textContent = `Loading ${cardTitle}...`;
+
+            // Open sidebar immediately with loading state
+            document.getElementById('sidebar').classList.add('open');
+            closeItemsSidebar();
 
             // Build query parameters
             const queryParams = {
@@ -3699,7 +3885,7 @@ $staffList = $person['available_staff'] ?? [];
                     groupby: 'invoice'
                 };
 
-                console.log('Fetching invoices with params:', queryParams);
+                // console.log('Fetching invoices with params:', queryParams);
 
                 // Fetch invoices
                 const response = await callApi('business_users_invoices', queryParams);
@@ -3860,6 +4046,18 @@ $staffList = $person['available_staff'] ?? [];
                 document.getElementById('sidebar-table').style.display = 'table';
             }
         }
+
+        // Add this to your existing code to handle fetch errors globally
+        window.addEventListener('unhandledrejection', function (event) {
+            console.error('Unhandled promise rejection:', event.reason);
+            hideLoader();
+
+            // Reset all loading buttons
+            document.querySelectorAll('.btn-loading').forEach(btn => {
+                btn.classList.remove('btn-loading');
+                btn.disabled = false;
+            });
+        });
         // document.addEventListener('click', function (e) {
         //     const el = e.target.closest('.invoice-amount');
         //     if (!el) return;
@@ -4889,7 +5087,7 @@ $staffList = $person['available_staff'] ?? [];
                 return;
             }
 
-            console.log(tableBodyId);
+            // console.log(tableBodyId);
 
             tbody.innerHTML = deals.deals.map((deal, index) => `
         <tr>
@@ -5685,7 +5883,7 @@ $staffList = $person['available_staff'] ?? [];
         function openEditModal(target = null) {
             const modal = document.getElementById('editTargetModal');
             modal.classList.add('show');
-            console.log(target);
+            // console.log(target);
 
             const title = document.getElementById('editTargetModalTitle');
             const submitBtn = document.getElementById('editTargetSubmitBtn');
@@ -5911,6 +6109,47 @@ $staffList = $person['available_staff'] ?? [];
         });
 
         // console.log(mainFilters);
+
+        // Add this logout function to your main JavaScript in sales-dashboard.php
+async function logout() {
+    try {
+        // Show confirmation dialog
+        const confirmLogout = confirm("Are you sure you want to logout?");
+        if (!confirmLogout) return;
+
+        // Show loader
+        showLoader('Logging out...');
+
+        // Clear any authentication tokens from localStorage/sessionStorage
+        localStorage.removeItem('auth_token');
+        sessionStorage.removeItem('auth_token');
+        localStorage.removeItem('api_key');
+        sessionStorage.removeItem('api_key');
+
+        // Clear any user data
+        localStorage.removeItem('user_data');
+        sessionStorage.removeItem('user_data');
+
+        // If you're using cookies, you can also clear them
+        document.cookie = "auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        document.cookie = "api_key=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+
+        // Show success message
+        softAlert('Logged out successfully!', 'success', 2000);
+
+        // Wait a moment before redirecting
+        setTimeout(() => {
+            // Correct the redirect path
+            window.location.href = 'http://flowaura_dev.local/login/login.php';
+        }, 1500);
+
+    } catch (error) {
+        console.error('Logout error:', error);
+        softAlert('Error during logout', 'error');
+        hideLoader();
+    }
+}
+
 
         async function loadAllTasks() {
             try {

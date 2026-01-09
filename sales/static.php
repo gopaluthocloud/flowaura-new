@@ -4573,50 +4573,6 @@ $staffList = $person['available_staff'] ?? [];
 
 
 
-        // Deals Won Modal Functions
-        // function populateDealsWonDropdown() {
-        //     const select = document.getElementById('dealsWonType');
-        //     select.innerHTML = '<option value="">All Types</option>';
-        //     dealsWonTypes.forEach(type => {
-        //         select.innerHTML += `<option value="${type}">${type}</option>`;
-        //     });
-        // }
-
-        // function openDealsWonModal() {
-        //     document.getElementById('dealsWonModal').classList.add('show');
-        //     document.getElementById('dealsWonType').value = selectedDealsWonType;
-        // }
-
-        // function closeDealsWonModal() {
-        //     document.getElementById('dealsWonModal').classList.remove('show');
-        // }
-
-        //         function applyDealsWonFilter() {
-
-        //     const filtered = dealsWonData || [];
-
-        //     const tbody = document.getElementById('dealsWonTableBody');
-        //     tbody.innerHTML = filtered.length
-        //         ? filtered.map((deal, index) => `
-        //             <tr>
-        //                 <td>${index + 1}</td>
-        //                 <td>${deal.name}</td>
-        //                 <td>${deal.company}</td>
-        //                 <td>${deal.value}</td>
-        //                 <td>
-        //                     <span class="badge on-track">
-        //                         ${deal.contractType || 'N/A'}
-        //                     </span>
-        //                 </td>
-        //                 <td>${deal.closedDate}</td>
-        //                 <td>${deal.rep}</td>
-        //             </tr>
-        //         `).join('')
-        //         : `<tr><td colspan="7" class="text-center">No Won Deals</td></tr>`;
-
-        //     toggleDealsTable('won');
-        // }
-
         // Contact Sidebar Functions
         async function openContactSidebar(contactId) {
             try {
@@ -4952,17 +4908,6 @@ $staffList = $person['available_staff'] ?? [];
 
         function convertToQuarterWise(apiData) {
 
-            // console.log(apiData);
-
-            // achived_buisness: 0​,
-            // achived_mrr: 0​​
-            // employee_id: "140"
-            // employee_name: "Gopal Singh"
-            // month: "April"
-            // quarter: "Q1"
-            // target_business: 63633.6
-            // target_mrr: 20999.088
-            // year: 2025
 
             if (!Array.isArray(apiData)) return [];
 
