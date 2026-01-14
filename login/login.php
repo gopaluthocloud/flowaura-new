@@ -7,8 +7,8 @@
     <title>Login - Sales Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="../api.js"></script>
     <style>
-        /* ... keep your existing styles ... */
         * {
             margin: 0;
             padding: 0;
@@ -340,32 +340,24 @@
     </div>
 
     <script>
-        // ==================== COOKIE FUNCTIONS ====================
-        
+        // ==================== CORE FUNCTIONS (From api.js) ====================
+
         // Set cookie from URL parameters (for envType)
         function setEnvCookieFromUrl() {
             const urlParams = new URLSearchParams(window.location.search);
             const envType = urlParams.get("envType");
 
             if (envType) {
-                // Set cookie with proper path and without Secure flag for local development
-                // Use path=/ to make it accessible across all pages
-                // Remove Secure flag for HTTP local development
-                const cookieString = `envType=${envType}; path=/; max-age=86400`; // 1 day
-                document.cookie = cookieString;
-                console.log("Env cookie set:", cookieString);
-                
-                // Also show debug info
-                console.log("Current URL:", window.location.href);
-                console.log("Found envType parameter:", envType);
-                
-                // Test if cookie was set
-                setTimeout(() => {
-                    console.log("All cookies after setting:", document.cookie);
-                    console.log("envType cookie value:", getCookie("envType"));
-                }, 100);
-            } else {
-                console.log("No envType parameter found in URL");
+                // Check if we're on HTTPS or HTTP to decide about Secure flag
+                const isSecure = window.location.protocol === 'https:';
+                const secureFlag = isSecure ? '; Secure' : '';
+
+                // Set cookie (1 day expiry)
+                document.cookie = `envType=${envType}; path=/; max-age=86400${secureFlag}`;
+                console.log("Env cookie set to:", envType);
+
+                // Clear any existing tokens when environment changes
+                clearAuthTokens();
             }
         }
 
@@ -373,26 +365,61 @@
         function getCookie(name) {
             const nameEQ = name + "=";
             const ca = document.cookie.split(';');
-            for(let i = 0; i < ca.length; i++) {
+            for (let i = 0; i < ca.length; i++) {
                 let c = ca[i];
                 while (c.charAt(0) === ' ') c = c.substring(1, c.length);
                 if (c.indexOf(nameEQ) === 0) {
-                    const value = c.substring(nameEQ.length, c.length);
-                    console.log(`Found cookie ${name}=${value}`);
-                    return value;
+                    return c.substring(nameEQ.length, c.length);
                 }
             }
-            console.log(`Cookie ${name} not found`);
             return null;
         }
 
-        // ==================== PAGE INITIALIZATION ====================
-        
-        // Call setEnvCookieFromUrl immediately when page loads
-        setEnvCookieFromUrl();
+        // Get current environment
+        function getCurrentEnv() {
+            const envType = getCookie("envType");
+            return envType || "prod"; // Default to prod if no cookie
+        }
+
+        // Get environment-specific storage key
+        function getEnvStorageKey(baseKey) {
+            const env = getCurrentEnv();
+            return `${baseKey}_${env}`;
+        }
+
+        // Clear all auth tokens
+        function clearAuthTokens() {
+            const envs = ['dev', 'prod'];
+            
+            envs.forEach(env => {
+                sessionStorage.removeItem(`auth_token_${env}`);
+                sessionStorage.removeItem(`username_${env}`);
+                localStorage.removeItem(`auth_token_${env}`);
+                localStorage.removeItem(`username_${env}`);
+            });
+            
+            sessionStorage.removeItem('auth_token');
+            sessionStorage.removeItem('username');
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('username');
+        }
+
+        // Store auth token
+        function storeAuthToken(token, remember = false) {
+            const envKey = getEnvStorageKey('auth_token');
+            const env = getCurrentEnv();
+
+            if (remember) {
+                localStorage.setItem(envKey, token);
+                console.log(`Token stored in localStorage for ${env} environment`);
+            } else {
+                sessionStorage.setItem(envKey, token);
+                console.log(`Token stored in sessionStorage for ${env} environment`);
+            }
+        }
 
         // ==================== PASSWORD FUNCTIONS ====================
-        
+
         // Toggle password visibility
         function togglePassword() {
             const passwordInput = document.getElementById('password');
@@ -410,7 +437,7 @@
         }
 
         // ==================== ALERT FUNCTIONS ====================
-        
+
         // Show alert message
         function showAlert(message, type = 'danger') {
             const alertBox = document.getElementById('alertBox');
@@ -429,7 +456,7 @@
         }
 
         // ==================== LOADING STATE ====================
-        
+
         // Set loading state
         function setLoading(loading) {
             const btn = document.getElementById('loginBtn');
@@ -451,7 +478,7 @@
         }
 
         // ==================== LOGIN FUNCTION ====================
-        
+
         // Handle login form submission
         function handleLogin(event) {
             event.preventDefault();
@@ -479,91 +506,97 @@
 
             setLoading(true);
 
-            // Check environment type from cookie
-            const envType = getCookie("envType") || "dev";
-            console.log("Using envType from cookie:", envType);
+            // Set environment cookie from URL if present
+            setEnvCookieFromUrl();
             
+            // Check environment type
+            const envType = getCurrentEnv();
+            console.log("Using envType:", envType);
+
             // Choose API base URL based on envType
             let API_BASE = "https://restadmindev.utho.com/v2";
             if (envType !== "dev") {
                 API_BASE = "https://restadmin.utho.com/v2";
             }
-            
-            // Build the URL with encoded parameters
-            const apiUrl = `${API_BASE}/auth/?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`;
+
+            // Build the URL
+            const apiUrl = `${API_BASE}/auth/`;
 
             console.log('API URL:', apiUrl);
             console.log('Environment:', envType);
 
+            // Send login request
             fetch(apiUrl, {
-                method: 'GET',
+                method: 'POST',
                 headers: {
                     'Accept': 'application/json',
+                    'Content-Type': 'application/json',
                 },
-            })
-                .then(async response => {
-                    const responseText = await response.text();
-                    console.log('Raw response:', responseText);
-
-                    try {
-                        const data = JSON.parse(responseText);
-                        setLoading(false);
-                        console.log('Parsed data:', data);
-
-                        if (data.rcode === "success") {
-                            showAlert('Login successful! Redirecting...', 'success');
-
-                            // Store token
-                            if (rememberMe) {
-                                localStorage.setItem('auth_token', data.token);
-                            } else {
-                                sessionStorage.setItem('auth_token', data.token);
-                            }
-
-                            // Store username
-                            sessionStorage.setItem('username', username);
-
-                            // Redirect to dashboard after 1 second
-                            setTimeout(() => {
-                                window.location.href = '../sales/sales-dashboard.php';
-                            }, 1000);
-                        } else {
-                            showAlert(data.rmessage || 'Login failed');
-                        }
-                    } catch (jsonError) {
-                        setLoading(false);
-                        console.error('JSON parsing error:', jsonError);
-
-                        if (responseText.includes('<!DOCTYPE') || responseText.includes('<html')) {
-                            showAlert('Server error: Received HTML instead of JSON. Check the API endpoint.');
-                        } else if (responseText.trim() === '') {
-                            showAlert('Server returned empty response. Check the API endpoint.');
-                        } else {
-                            showAlert('Invalid server response: ' + responseText.substring(0, 100));
-                        }
-                    }
+                body: JSON.stringify({
+                    username: username,
+                    password: password
                 })
-                .catch(error => {
+            })
+            .then(async response => {
+                const data = await response.json();
+                
+                if (data.rcode === "success" && data.token) {
+                    showAlert('Login successful!', 'success');
+                    
+                    // Store token and username
+                    storeAuthToken(data.token, rememberMe);
+                    
+                    // Store username
+                    const usernameKey = getEnvStorageKey('username');
+                    if (rememberMe) {
+                        localStorage.setItem(usernameKey, username);
+                    } else {
+                        sessionStorage.setItem(usernameKey, username);
+                    }
+                    
+                    // Redirect to dashboard
+                    setTimeout(() => {
+                        window.location.href = '../sales/sales-dashboard.php';
+                    }, 1000);
+                } else {
+                    showAlert(data.rmessage || 'Invalid username or password');
                     setLoading(false);
-                    console.error('Network error:', error);
-                    showAlert('Connection error. Please try again.');
-                });
+                }
+            })
+            .catch(error => {
+                console.error('Login error:', error);
+                showAlert('Network error. Please try again.');
+                setLoading(false);
+            });
 
             return false;
         }
 
-        // ==================== CHECK EXISTING SESSION ====================
-        
-        // Check if already logged in
+        // ==================== PAGE INITIALIZATION ====================
+
+        // Initialize on page load
         document.addEventListener('DOMContentLoaded', function () {
             // Log current cookies for debugging
             console.log("All cookies on page load:", document.cookie);
-            console.log("envType cookie:", getCookie("envType"));
             
-            const token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
+            // Check for existing session
+            const envType = getCookie("envType") || "prod";
+            const tokenKey = `auth_token_${envType}`;
+            const token = localStorage.getItem(tokenKey) || sessionStorage.getItem(tokenKey);
+            
             if (token) {
                 console.log("Found existing token, redirecting to dashboard");
-                window.location.href = 'sales/sales-dashboard.php';
+                // Store username if available
+                const usernameKey = `username_${envType}`;
+                const username = localStorage.getItem(usernameKey) || sessionStorage.getItem(usernameKey);
+                if (username) {
+                    sessionStorage.setItem(usernameKey, username);
+                }
+                
+                // Redirect to dashboard
+                setTimeout(() => {
+                    window.location.href = '../sales/sales-dashboard.php';
+                }, 500);
             }
         });
     </script>
