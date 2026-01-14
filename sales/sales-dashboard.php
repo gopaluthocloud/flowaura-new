@@ -1249,6 +1249,20 @@
             color: #1F2937;
         }
 
+        /* Add to your existing CSS */
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 16px;
+            color: #d1d5db;
+        }
+
         .progress-bar-custom {
             background: #E5E7EB;
             height: 8px;
@@ -2054,20 +2068,6 @@
     </style>
 </head>
 
-<?php
-include "../api_function.php";
-
-$apiKey = "nKrgfYvTXtRJdLASDHbqspPkGOFmEaxwNCZQUzIeVoWMjyuchiBl";
-
-$sales_person_dropdown = CallAPI('GET', 'staff', [], $apiKey);
-$person = json_decode($sales_person_dropdown, true);
-$staffList = $person['available_staff'] ?? [];
-// print_r($staffList);
-
-
-
-
-?>
 
 <body>
     <!-- Sidebar -->
@@ -2109,18 +2109,9 @@ $staffList = $person['available_staff'] ?? [];
                     <label for="sales_person" class="form-label">Sales Person</label>
                     <select id="sales_person" class="form-select">
                         <option value="all">All Sales Persons</option>
-
-                        <?php foreach ($staffList as $staff) {
-                            $fullName = trim($staff['firstname'] . " " . $staff['lastname']);
-                            ?>
-                            <option value="<?= $staff['id']; ?>">
-                                <?= htmlspecialchars($fullName); ?>
-                            </option>
-                        <?php } ?>
-
+                        <!-- Options will be populated by JavaScript -->
                     </select>
                 </div>
-
 
                 <!-- Get Report Button -->
                 <div class="col-md-3">
@@ -2131,9 +2122,6 @@ $staffList = $person['available_staff'] ?? [];
 
             </div>
         </div>
-
-
-
 
         <!-- Content Area -->
         <div class="content-area">
@@ -2206,7 +2194,6 @@ $staffList = $person['available_staff'] ?? [];
                     </div>
                     <br>
                     <div class="row">
-
                         <div class="col-md-3 filter-actions-group">
                             <button class="btn-filter primary" onclick="applyTasksFilter()"><i class="bi bi-funnel"></i>
                                 Apply</button>
@@ -2298,128 +2285,115 @@ $staffList = $person['available_staff'] ?? [];
                 </div>
             </div>
 
-
             <!-- Stats Grid - Row 2: 6 Smaller Cards -->
             <div class="stats-grid-row-2" id="statsGridRow2">
                 <!-- Small stats will be populated here -->
             </div>
-        </div>
 
-        <!-- Sales Target vs Achieved -->
-        <!-- <div class="section">
-            <div class="section-header">
-                <h2 class="section-title">Sales Target vs Achieved - Q4 2024</h2>
-            </div>
-            <div style="height: 300px; position: relative;">
-                <canvas id="salesTargetChart"></canvas>
-            </div>
-        </div> -->
-
-
-
-        <!-- Deals -->
-        <div class="section">
-            <div class="section-header">
-                <h2 class="section-title">Total Funnel Value</h2>
-            </div>
-            <div class="stats-grid-row-1" id="totalFunnelValue">
-                <!-- Pipeline stages will be populated here -->
-            </div>
-            <!-- Filter Tables -->
-            <div class="filter-table-container" id="dealsLostTable">
-                <h4 style="font-size: 14px; font-weight: 600; margin-bottom: 12px;">Deals Lost Details</h4>
-                <table class="filter-table">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Deal ID</th>
-                            <th>Contact Name</th>
-                            <th>Deal Name</th>
-                            <th>Deal Amount</th>
-                            <th>Assigned to</th>
-                            <th>Deal Stage</th>
-                        </tr>
-                    </thead>
-                    <tbody id="dealsLostTableBody">
-                        <!-- Will be populated dynamically -->
-                    </tbody>
-                </table>
-            </div>
-            <div class="filter-table-container" id="dealsWonTable">
-                <h4 style="font-size: 14px; font-weight: 600; margin-bottom: 12px;">Deals Won Details</h4>
-                <table class="filter-table">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Deal ID</th>
-                            <th>Contact Name</th>
-                            <th>Deal Name</th>
-                            <th>Deal Amount</th>
-                            <th>Assigned to</th>
-                            <th>Deal Stage</th>
-                        </tr>
-                    </thead>
-                    <tbody id="dealsWonTableBody">
-                        <!-- Will be populated dynamically -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Recent Activity -->
-        <div class="section">
-            <div class="section-header">
-                <h2 class="section-title">Recent Activity</h2>
-            </div>
-            <div class="activity-timeline" id="activityTimeline">
-                <!-- Activities will be populated here -->
-            </div>
-        </div>
-
-        <!-- Manage Sales Targets -->
-        <div class="section">
-            <div class="section-header">
-                <h2 class="section-title">Manage Sales Targets</h2>
-                <div class="section-actions">
-                    <button class="btn-sm" onclick="openEditModal()">
-                        <i class="bi bi-pencil"></i> Add Target
-                    </button>
+            <!-- Deals -->
+            <div class="section">
+                <div class="section-header">
+                    <h2 class="section-title">Total Funnel Value</h2>
+                </div>
+                <div class="stats-grid-row-1" id="totalFunnelValue">
+                    <!-- Pipeline stages will be populated here -->
+                </div>
+                <!-- Filter Tables -->
+                <div class="filter-table-container" id="dealsLostTable">
+                    <h4 style="font-size: 14px; font-weight: 600; margin-bottom: 12px;">Deals Lost Details</h4>
+                    <table class="filter-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Deal ID</th>
+                                <th>Contact Name</th>
+                                <th>Deal Name</th>
+                                <th>Deal Amount</th>
+                                <th>Assigned to</th>
+                                <th>Deal Stage</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dealsLostTableBody">
+                            <!-- Will be populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="filter-table-container" id="dealsWonTable">
+                    <h4 style="font-size: 14px; font-weight: 600; margin-bottom: 12px;">Deals Won Details</h4>
+                    <table class="filter-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Deal ID</th>
+                                <th>Contact Name</th>
+                                <th>Deal Name</th>
+                                <th>Deal Amount</th>
+                                <th>Assigned to</th>
+                                <th>Deal Stage</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dealsWonTableBody">
+                            <!-- Will be populated dynamically -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
-            <div class="table-responsive">
-                <table class="data-table targets-table" id="targetsTable">
-                    <thead>
-                        <tr>
-                            <th rowspan="3">#</th>
-                            <th rowspan="3">YEAR</th>
-                            <th rowspan="3">QUARTER</th>
-                            <th rowspan="3">TOTAL TARGET<br><small style="font-weight: 400; color: #6B7280;">(MRR +
-                                    WHOLE)</small></th>
-                            <th rowspan="3">TARGET<br>MRR</th>
-                            <th colspan="6" style="text-align: center; background: #F3F4F6;">MONTH WISE</th>
-                            <th rowspan="3">ACHIEVED<br>REVENUE</th>
-                            <th rowspan="3">ACHIEVED<br>MRR</th>
-                            <th rowspan="3">ACHIEVEMENT</th>
-                            <th rowspan="3">STATUS</th>
-                            <th rowspan="3">ACTION</th>
-                        </tr>
-                        <tr>
-                            <th colspan="3" style="text-align: center; background: #F9FAFB;">WHOLE</th>
-                            <th colspan="3" style="text-align: center; background: #F9FAFB;">MRR</th>
-                        </tr>
-                        <tr>
-                            <th style="text-align: center;">Month 1</th>
-                            <th style="text-align: center;">Month 2</th>
-                            <th style="text-align: center;">Month 3</th>
-                            <th style="text-align: center;">Month 1</th>
-                            <th style="text-align: center;">Month 2</th>
-                            <th style="text-align: center;">Month 3</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Table rows will be populated here -->
-                    </tbody>
-                </table>
+
+            <!-- Recent Activity -->
+            <div class="section">
+                <div class="section-header">
+                    <h2 class="section-title">Recent Activity</h2>
+                </div>
+                <div class="activity-timeline" id="activityTimeline">
+                    <!-- Activities will be populated here -->
+                </div>
+            </div>
+
+            <!-- Manage Sales Targets -->
+            <div class="section">
+                <div class="section-header">
+                    <h2 class="section-title">Manage Sales Targets</h2>
+                    <div class="section-actions">
+                        <button class="btn-sm" onclick="openEditModal()">
+                            <i class="bi bi-pencil"></i> Add Target
+                        </button>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table targets-table" id="targetsTable">
+                        <thead>
+                            <tr>
+                                <th rowspan="3">#</th>
+                                <th rowspan="3">YEAR</th>
+                                <th rowspan="3">QUARTER</th>
+                                <th rowspan="3">TOTAL TARGET<br><small style="font-weight: 400; color: #6B7280;">(MRR +
+                                        WHOLE)</small></th>
+                                <th rowspan="3">TARGET<br>MRR</th>
+                                <th colspan="6" style="text-align: center; background: #F3F4F6;">MONTH WISE</th>
+                                <th rowspan="3">ACHIEVED<br>REVENUE</th>
+                                <th rowspan="3">ACHIEVED<br>MRR</th>
+                                <th rowspan="3">ACHIEVEMENT</th>
+                                <th rowspan="3">STATUS</th>
+                                <th rowspan="3">ACTION</th>
+                            </tr>
+                            <tr>
+                                <th colspan="3" style="text-align: center; background: #F9FAFB;">WHOLE</th>
+                                <th colspan="3" style="text-align: center; background: #F9FAFB;">MRR</th>
+                            </tr>
+                            <tr>
+                                <th style="text-align: center;">Month 1</th>
+                                <th style="text-align: center;">Month 2</th>
+                                <th style="text-align: center;">Month 3</th>
+                                <th style="text-align: center;">Month 1</th>
+                                <th style="text-align: center;">Month 2</th>
+                                <th style="text-align: center;">Month 3</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Table rows will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -2484,7 +2458,6 @@ $staffList = $person['available_staff'] ?? [];
         </div>
     </div>
 
-
     <!-- Sidebars Container -->
     <div class="sidebars-container">
         <!-- Main Cards Sidebar -->
@@ -2526,8 +2499,6 @@ $staffList = $person['available_staff'] ?? [];
         </div>
     </div>
 
-
-
     <!-- Contact Sidebar -->
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeContactSidebar()"></div>
     <div class="contact-sidebar" id="contactSidebar">
@@ -2537,7 +2508,6 @@ $staffList = $person['available_staff'] ?? [];
         </div>
 
         <div class="contact-info" id="contactInfoContent">
-            <!-- Contact header -->
             <h2 id="contactFullName" style="font-size: 18px; font-weight: 600; margin-bottom: 20px;"></h2>
 
             <!-- Contact details in table format -->
@@ -2798,7 +2768,7 @@ $staffList = $person['available_staff'] ?? [];
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Year *</label>
-                                <select class="form-control" id="targetYear" required
+                                <select class="form-control" id="targetYearForm" required
                                     style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px;">
                                     <option value="">Select Year</option>
                                     <option value="2024">2024</option>
@@ -2820,7 +2790,7 @@ $staffList = $person['available_staff'] ?? [];
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Quarter *</label>
-                                <select class="form-control" id="targetQuarter" required
+                                <select class="form-control" id="targetQuarterForm" required
                                     style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px;">
                                     <option value="">Select Quarter</option>
                                     <option value="Q1">Q1 (April-May-June)</option>
@@ -2850,55 +2820,30 @@ $staffList = $person['available_staff'] ?? [];
         </div>
     </div>
 
-    <?php
-
-    ?>
     <script src="../api.js"></script>
 
-
     <script>
-
-
-        document.addEventListener("DOMContentLoaded", () => {
-            loadOverdueFollowups();
-        });
-
-        async function loadOverdueFollowups() {
-            const [data, header_card, contacts] = await Promise.all([
-                callApi("followup"),
-                callApi("report_followups"),
-                callApi("contact")
-            ]);
-            // console.log(data);
-
-            return { data, header_card, contacts };
-        }
-
-
-
+        // ============ GLOBAL VARIABLES ============
         let currentTaskFilters = {
             department: '',
             status: '',
             ref_type: '',
             ref_id: ''
         };
-
         let currentCategory = '';
         let mainFilters = {
             sales_person: '',
             date_from: '',
             date_to: ''
         };
-        const staffList = <?= json_encode($staffList) ?>;
+        let staffList = [];
         let leadSourceChartInstance = null;
-
+        let quarterTargetChartInstance = null;
         let currentContactId = null;
         let tasksLoaded = false;
         let currentTeamTarget = null;
-
         let currentFilters = {};
         let dashboardData = {};
-        let dashboardData_new = {};
         let currentPage = 1;
         const itemsPerPage = 10;
         let filteredTasks = [];
@@ -2909,20 +2854,133 @@ $staffList = $person['available_staff'] ?? [];
         let dealsWonData = [];
         let selectedDealsLostReason = '';
         let selectedDealsWonType = '';
-
         let invoiceItemsInclude = 1;
         let currentInvoiceUserId = null;
         let currentInvoiceId = null;
+        let currentUserId = null;
+        let currentUserName = null;
+        let includeInvoice = 0; // default = Exclude invoices
 
+        // ============ INITIALIZATION ============
+        async function initDashboard() {
+            showLoader('Initializing dashboard...');
+            try {
+                // Load staff first
+                await loadStaffList();
 
+                // Load dashboard data
+                await loadDashboard();
 
+                // Setup initial report
+                const initialFormData = getFormData();
+                await loadKPIReport(initialFormData);
 
+                // Setup event listeners
+                setupEventListeners();
 
-        // Update loadDashboard_new function
-        async function loadDashboard_new() {
+            } catch (error) {
+                console.error('Dashboard initialization error:', error);
+                softAlert('Error initializing dashboard', 'error');
+            } finally {
+                hideLoader();
+            }
+        }
+
+        function getMainFilters() {
+            return {
+                date_from: document.getElementById("date_from")?.value || "",
+                date_to: document.getElementById("date_to")?.value || "",
+                status: document.getElementById("status")?.value || "",
+                user: document.getElementById("user")?.value || ""
+            };
+        }
+
+        // ============ STAFF LIST FUNCTIONS ============
+        async function loadStaffList() {
+            try {
+                // console.log("Loading staff list...");
+
+                const response = await callApi('staff', {}, 'GET');
+                // console.log('Staff API response:', response);
+
+                // Check different possible response structures
+                if (response && Array.isArray(response)) {
+                    staffList = response;
+                } else if (response && response.available_staff && Array.isArray(response.available_staff)) {
+                    staffList = response.available_staff;
+                } else if (response && response.data && Array.isArray(response.data)) {
+                    staffList = response.data;
+                } else if (response && response.staffs && Array.isArray(response.staffs)) {
+                    staffList = response.staffs;
+                } else {
+                    console.warn('Unexpected staff response structure:', response);
+                    staffList = [];
+                }
+
+                // console.log(`Loaded ${staffList.length} staff members`);
+
+                populateSalesPersonDropdown();
+                populateTeamMemberDropdown();
+
+            } catch (error) {
+                console.error('Error loading staff list:', error);
+                staffList = [];
+                softAlert('Error loading staff list', 'error');
+            }
+        }
+
+        function populateSalesPersonDropdown() {
+            const dropdown = document.getElementById('sales_person');
+            if (!dropdown) return;
+
+            // Clear existing options except the first one
+            while (dropdown.options.length > 1) {
+                dropdown.remove(1);
+            }
+
+            // Add staff options
+            staffList.forEach(staff => {
+                const fullName = getStaffFullName(staff);
+                const option = document.createElement('option');
+                option.value = staff.id;
+                option.textContent = fullName;
+                dropdown.appendChild(option);
+            });
+        }
+
+        function populateTeamMemberDropdown() {
+            const dropdown = document.getElementById('teamMemberSelect');
+            if (!dropdown) return;
+
+            // Clear existing options except the first one
+            dropdown.innerHTML = '<option value="">Select Team Member</option>';
+
+            // Add staff options
+            staffList.forEach(staff => {
+                const fullName = getStaffFullName(staff);
+                const option = document.createElement('option');
+                option.value = staff.id;
+                option.textContent = fullName;
+                dropdown.appendChild(option);
+            });
+        }
+
+        function getStaffFullName(staff) {
+            const firstName = staff.firstname || '';
+            const lastName = staff.lastname || '';
+            const fullName = `${firstName} ${lastName}`.trim();
+
+            if (!fullName) {
+                return staff.username || `User ${staff.id}`;
+            }
+
+            return fullName;
+        }
+
+        // ============ DASHBOARD LOADING ============
+        async function loadDashboard() {
             try {
                 showLoader('Loading Dashboard...');
-
                 const result = await loadOverdueFollowups();
 
                 if (!result) return;
@@ -2944,16 +3002,288 @@ $staffList = $person['available_staff'] ?? [];
             }
         }
 
+        async function loadOverdueFollowups() {
+            try {
+                const [data, header_card, contacts] = await Promise.all([
+                    callApi("followup").catch(err => {
+                        console.error('Error loading followups:', err);
+                        return { followups: [] };
+                    }),
+                    callApi("report_followups").catch(err => {
+                        console.error('Error loading report followups:', err);
+                        return { followups: { due: [] } };
+                    }),
+                    callApi("contact").catch(err => {
+                        console.error('Error loading contacts:', err);
+                        return { contacts: [] };
+                    })
+                ]);
+                return { data, header_card, contacts };
+            } catch (error) {
+                console.error('Error in loadOverdueFollowups:', error);
+                return {
+                    data: { followups: [] },
+                    header_card: { followups: { due: [] } },
+                    contacts: { contacts: [] }
+                };
+            }
+        }
 
+        // ============ KPI REPORT ============
+        async function loadKPIReport({ sales_person, date_from, date_to }) {
+            try {
+                setButtonLoading(document.getElementById('getReportBtn'), true);
+                showLoader('Generating Report...');
 
+                currentFilters = { sales_person, date_from, date_to };
+
+                const [adminRes, dealRes] = await Promise.all([
+                    callApi('adminreport', {
+                        assigned_to: sales_person,
+                        create_start: date_from,
+                        create_end: date_to
+                    }).catch(err => {
+                        console.error('Error loading admin report:', err);
+                        return { staff: [{}], activity: [] };
+                    }),
+                    callApi('deal', {
+                        userid: sales_person,
+                        create_start: date_from,
+                        create_end: date_to
+                    }).catch(err => {
+                        console.error('Error loading deals:', err);
+                        return { deals: [] };
+                    })
+                ]);
+
+                // console.log(adminRes);
+
+                const adminKpis = safeGet(adminRes, 'staff', {});
+                const emp_target = adminRes.staff[0].emp_targets || {};
+
+                // console.log(emp_target);
+                const activity = safeGet(adminRes, 'staff.activity', []);
+
+                renderKPICards(adminKpis || {});
+                renderStatsRow2(adminKpis || {});
+                totalFunnelValue(adminKpis || {});
+                renderActivity(activity || []);
+
+                const quarterWiseTargets = convertToQuarterWise(emp_target || []);
+                // console.log(quarterWiseTargets);
+                renderTargetsTable(quarterWiseTargets || []);
+                performance_overview(emp_target || []);
+
+            } catch (error) {
+                console.error("KPI API error:", error);
+                softAlert('Error loading report. Please try again.', 'error');
+
+                renderKPICards({});
+                renderStatsRow2({});
+                totalFunnelValue({});
+                renderActivity([]);
+                renderTargetsTable([]);
+                performance_overview([]);
+            } finally {
+                setButtonLoading(document.getElementById('getReportBtn'), false);
+                hideLoader();
+            }
+        }
+
+        // ============ FORM HANDLING ============
+        function getFormData() {
+            const rawFrom = document.getElementById("date_from").value;
+            const rawTo = document.getElementById("date_to").value;
+
+            return {
+                date_from: convertToDMY(rawFrom),
+                date_to: convertToDMY(rawTo),
+                sales_person: document.getElementById("sales_person").value
+            };
+        }
+
+        function convertToDMY(dateString) {
+            if (!dateString) return '';
+            const [year, month, day] = dateString.split("-");
+            return `${year}-${month}-${day}`;
+        }
+
+        function convertToDMY(dateString) {
+            if (!dateString) return '';
+            const [year, month, day] = dateString.split("-");
+            return `${year}-${month}-${day}`;
+        }
+
+        // ============ CHART FUNCTIONS ============
+        function performance_overview(emp_target) {
+            if (!emp_target || !Array.isArray(emp_target)) {
+                document.getElementById('achievementPercent').innerText = '0%';
+                document.getElementById('targetAchieved').innerText = formatINR(0);
+                document.getElementById('remainingTarget').innerText = formatINR(0);
+                salesTargetOverviewGraph({ achieved: 0, remaining: 0 });
+                return;
+            }
+
+            let totalTarget = 0;
+            let totalAchieved = 0;
+
+            emp_target.forEach(item => {
+                totalTarget += Number(safeGet(item, 'target_business', 0));
+                totalAchieved += Number(safeGet(item, 'achived_buisness', 0));
+            });
+
+            const remainingTarget = Math.max(totalTarget - totalAchieved, 0);
+            const achievedPercent = totalTarget > 0
+                ? ((totalAchieved / totalTarget) * 100).toFixed(1)
+                : 0;
+
+            document.getElementById('achievementPercent').innerText = `${achievedPercent}%`;
+            document.getElementById('targetAchieved').innerText = formatINR(totalAchieved);
+            document.getElementById('remainingTarget').innerText = formatINR(remainingTarget);
+
+            salesTargetOverviewGraph({
+                achieved: totalAchieved,
+                remaining: remainingTarget
+            });
+        }
+
+        function salesTargetOverviewGraph(data) {
+            // console.log(data);
+            const ctx = document.getElementById('quarterTargetChart').getContext('2d');
+
+            if (quarterTargetChartInstance) {
+                quarterTargetChartInstance.destroy();
+            }
+
+            quarterTargetChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Achieved', 'Remaining'],
+                    datasets: [{
+                        data: [data.achieved, data.remaining],
+                        backgroundColor: ['#10B981', '#E5E7EB'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    cutout: '75%',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: false }
+                    }
+                }
+            });
+        }
+
+        async function getSourceStatusData(data) {
+            try {
+                const contacts = data.contacts || [];
+                const sourceCount = contacts.reduce((acc, contact) => {
+                    const source = contact.source || "Unknown";
+                    acc[source] = (acc[source] || 0) + 1;
+                    return acc;
+                }, {});
+
+                renderCharts(sourceCount);
+            } catch (error) {
+                console.error("Error fetching source/status data:", error);
+            }
+        }
+
+        function renderCharts(sourceCount) {
+            const canvas = document.getElementById('leadSourceChart');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+
+            if (leadSourceChartInstance) {
+                leadSourceChartInstance.destroy();
+                leadSourceChartInstance = null;
+            }
+
+            leadSourceChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(sourceCount),
+                    datasets: [{
+                        data: Object.values(sourceCount),
+                        backgroundColor: [
+                            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
+                            '#9966FF', '#FF9F40', '#8AC926', '#1982C4'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        // ============ UTILITY FUNCTIONS ============
+        function safeGet(obj, path, defaultValue = '') {
+            if (!obj) return defaultValue;
+            const keys = path.split('.');
+            let result = obj;
+            for (let key of keys) {
+                if (result && typeof result === 'object' && key in result) {
+                    result = result[key];
+                } else {
+                    return defaultValue;
+                }
+            }
+            return result === null || result === undefined ? defaultValue : result;
+        }
+
+        function formatINR(value) {
+            if (!value || isNaN(value)) return '₹ 0';
+            if (value >= 100000) {
+                return `₹ ${(value / 100000).toFixed(2)}Lk`;
+            }
+            if (value >= 1000) {
+                return `₹ ${(value / 1000).toFixed(2)}K`;
+            }
+            return `₹ ${value.toFixed(2)}`;
+        }
+
+        function formatCurrency(value) {
+            if (!value) return '₹ 0';
+            if (typeof value === 'string' && value.includes('₹')) {
+                return value;
+            }
+            const numValue = parseFloat(value);
+            if (isNaN(numValue)) return '₹ 0';
+            return `₹ ${numValue.toLocaleString('en-IN', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            })}`;
+        }
+
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, function (m) { return map[m]; });
+        }
+
+        // ============ TASK MANAGEMENT ============
         function toggleTasks() {
             const tableWrapper = document.getElementById('tasksTableWrapper');
             const filterBtn = document.getElementById('tasksFilterBtn');
             const filterForm = document.getElementById('tasksFilterForm');
             const seeTasksBtn = document.getElementById('seeTasksBtn');
             const isHidden = tableWrapper.style.display === 'none';
+
             if (isHidden) {
-                // SHOW
                 tableWrapper.style.display = 'block';
                 filterBtn.style.display = 'inline-flex';
                 filterForm.style.display = 'none';
@@ -2963,7 +3293,6 @@ $staffList = $person['available_staff'] ?? [];
                     tasksLoaded = true;
                 }
             } else {
-                // HIDE
                 tableWrapper.style.display = 'none';
                 filterBtn.style.display = 'none';
                 filterForm.style.display = 'none';
@@ -2971,194 +3300,433 @@ $staffList = $person['available_staff'] ?? [];
             }
         }
 
-        function softAlert(message, type = 'success', duration = 3000) {
-            const alert = document.createElement('div');
-            alert.className = `soft-alert ${type}`;
-            alert.textContent = message;
-
-            document.body.appendChild(alert);
-
-            // show
-            setTimeout(() => alert.classList.add('show'), 50);
-
-            // hide
-            setTimeout(() => {
-                alert.classList.remove('show');
-                setTimeout(() => alert.remove(), 300);
-            }, duration);
+        function toggleTasksFilter() {
+            const filterForm = document.getElementById('tasksFilterForm');
+            filterForm.style.display = filterForm.style.display === 'none' ? 'block' : 'none';
         }
 
-
-
-        /////////////////////////////////////////////////SIDEBAR TABLE START
-
-        //date & sales person
-        document.addEventListener("DOMContentLoaded", function () {
-
-            const today = new Date();
-            const month = today.getMonth() + 1;
-            const year = today.getFullYear();
-
-            let startDate = "";
-            let endDate = "";
-
-            if (month >= 4 && month <= 6) {
-                startDate = `${year}-04-01`;
-                endDate = `${year}-06-30`;
-            } else if (month >= 7 && month <= 9) {
-                startDate = `${year}-07-01`;
-                endDate = `${year}-09-30`;
-            } else if (month >= 10 && month <= 12) {
-                startDate = `${year}-10-01`;
-                endDate = `${year}-12-31`;
-            } else {
-                startDate = `${year}-01-01`;
-                endDate = `${year}-03-31`;
-            }
-
-            document.getElementById("date_from").value = startDate;
-            document.getElementById("date_to").value = endDate;
-
-            function convertToDMY(dateString) {
-                const [year, month, day] = dateString.split("-");
-                return `${year}-${month}-${day}`;
-            }
-
-            function getFormData() {
-                const rawFrom = document.getElementById("date_from").value;
-                const rawTo = document.getElementById("date_to").value;
-
-                return {
-                    date_from: convertToDMY(rawFrom),
-                    date_to: convertToDMY(rawTo),
-                    sales_person: document.getElementById("sales_person").value
-                };
-            }
-            const initialFormData = getFormData();
-            loadKPIReport(initialFormData);
-            // getFormValue(initialFormData);
-
-
-            document.getElementById("getReportBtn").addEventListener("click", function (e) {
-                e.preventDefault();
-                const formData = getFormData();
-                loadKPIReport(formData);
-                // getFormValue(formData);
-            });
-        });
-        // function getFormValue(getFormValue) {
-        //     console.log(getFormValue);
-        // }
-
-        function showLoader(text = 'Loading Dashboard...') {
-            const loader = document.getElementById('globalLoader');
-            const loaderText = document.getElementById('loaderText');
-
-            if (loader && loaderText) {
-                loaderText.textContent = text;
-                loader.classList.add('active');
-                document.body.style.overflow = 'hidden'; // Prevent scrolling
-            }
+        async function loadTasksData() {
+            await loadAllTasks();
         }
 
-        function hideLoader() {
-            const loader = document.getElementById('globalLoader');
-            if (loader) {
-                loader.classList.remove('active');
-                document.body.style.overflow = ''; // Restore scrolling
-            }
-        }
-
-        function setButtonLoading(button, isLoading) {
-            if (!button) return;
-
-            if (isLoading) {
-                button.classList.add('btn-loading');
-                button.disabled = true;
-            } else {
-                button.classList.remove('btn-loading');
-                button.disabled = false;
-            }
-        }
-
-        const originalCallApi = window.callApi;
-        window.callApi = async function (endpoint, params = {}, method = 'GET') {
-            // Show loader for major API calls (excluding small ones)
-            const showGlobalLoader = !['followup', 'note', 'call', 'log'].includes(endpoint);
-
-            if (showGlobalLoader) {
-                showLoader('Fetching data...');
-            }
-
+        async function loadAllTasks() {
             try {
-                const result = await originalCallApi(endpoint, params, method);
-                return result;
+                const data = await callApi("followup", { status: 24 });
+                filteredTasks = data?.followups || [];
+                allTasks = filteredTasks;
+                currentPage = 1;
+                renderTasks(currentPage);
             } catch (error) {
-                console.error('API Error:', error);
-                throw error;
-            } finally {
-                if (showGlobalLoader) {
-                    setTimeout(hideLoader, 300); // Small delay for better UX
+                console.error("Error loading tasks:", error);
+            }
+        }
+
+        function renderTasks(page) {
+            const tbody = document.getElementById('tasksTableBody');
+            const start = (page - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const pageTasks = filteredTasks.slice(start, end);
+
+            if (!pageTasks || pageTasks.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="12" class="empty-state">
+                            <i class="bi bi-inbox"></i>
+                            <div>No tasks found</div>
+                            <small>Try adjusting your filters</small>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = pageTasks.map((task, index) => `
+                <tr onclick="openContactSidebar('${safeGet(task, 'ref_id', '')}')">
+                    <td>${start + index + 1}</td>
+                    <td>${safeGet(task, 'id', '')}</td>
+                    <td><span class="badge ${safeGet(task, 'type_text') === 'Call' ? 'status-new' : safeGet(task, 'type_text') === 'Email' ? 'status-qualified' : 'status-contacted'}">${safeGet(task, 'type_text', '')}</span></td>
+                    <td><span class="badge ${safeGet(task, 'status_text') === 'Completed' ? 'completed' : safeGet(task, 'status_text') === 'Overdue' ? 'overdue' : 'pending'}">${safeGet(task, 'status_text', '')}</span></td>
+                    <td>${safeGet(task, 'followuptime', '')}</td>
+                    <td>${safeGet(task, 'clientname', '')}</td>
+                    <td>${safeGet(task, 'message', '')}</td>
+                    <td>${safeGet(task, 'followup_admin_name', '')}</td>
+                    <td>${safeGet(task, 'department', '')}</td>
+                    <td>${safeGet(task, 'ref_type', '')}</td>
+                    <td>${safeGet(task, 'entrytime', '')}</td>
+                    <td>${safeGet(task, 'completedtime', '')}</td>
+                </tr>
+            `).join('');
+
+            renderPagination();
+        }
+
+        function renderPagination() {
+            const pagination = document.getElementById('tasksPagination');
+            const totalPages = Math.ceil(filteredTasks.length / itemsPerPage);
+
+            if (totalPages <= 1) {
+                pagination.innerHTML = '';
+                return;
+            }
+
+            let paginationHTML = `
+                <button class="pagination-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+            `;
+
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    paginationHTML += `<button class="pagination-btn ${currentPage === i ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+                } else if (i === currentPage - 2 || i === currentPage + 2) {
+                    paginationHTML += `<span class="pagination-btn" style="cursor: default;">...</span>`;
                 }
             }
-        };
 
-        async function loadKPIReport({ sales_person, date_from, date_to }) {
-            try {
-                const getReportBtn = document.getElementById('getReportBtn');
-                setButtonLoading(getReportBtn, true);
-                showLoader('Generating Report...');
+            paginationHTML += `
+                <button class="pagination-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
+                    <i class="bi bi-chevron-right"></i>
+                </button>
+            `;
 
-                currentFilters = {
-                    sales_person,
-                    date_from,
-                    date_to
-                };
+            pagination.innerHTML = paginationHTML;
+        }
 
-                // Call BOTH APIs in parallel
-                const [adminRes, dealRes] = await Promise.all([
-                    callApi('adminreport', {
-                        assigned_to: sales_person,
-                        create_start: date_from,
-                        create_end: date_to
-                    }),
-                    callApi('deal', {
-                        userid: sales_person,
-                        create_start: date_from,
-                        create_end: date_to
-                    })
-                ]);
-
-                // Your existing processing code...
-                if (!adminRes && !dealRes) return;
-
-                const adminKpis = adminRes?.staff?.[0];
-                const emp_target = adminRes?.staff?.[0]?.emp_targets;
-                const activity = adminRes?.staff?.activity;
-
-                if (adminKpis) {
-                    renderKPICards(adminKpis);
-                    renderStatsRow2(adminKpis);
-                    totalFunnelValue(adminKpis);
-                    renderActivity(activity);
-
-                    const quarterWiseTargets = convertToQuarterWise(emp_target);
-                    renderTargetsTable(quarterWiseTargets);
-                    performance_overview(emp_target);
-                }
-
-            } catch (error) {
-                console.error("KPI API error:", error);
-                softAlert('Error loading report. Please try again.', 'error');
-            } finally {
-                setButtonLoading(document.getElementById('getReportBtn'), false);
-                hideLoader();
+        function changePage(page) {
+            const totalPages = Math.ceil(filteredTasks.length / itemsPerPage);
+            if (page >= 1 && page <= totalPages) {
+                currentPage = page;
+                renderTasks(currentPage);
             }
         }
 
+        // ============ RENDER FUNCTIONS ============
+        function renderKPICards(kpis) {
+            // console.log(kpis[0]);
 
+            const statsGridRow0 = document.getElementById('statsGridRow0');
+            const firstStats = [
+                {
+                    title: 'Total Business',
+                    value: safeGet(kpis[0], 'total_business', 0),
+                    icon: 'bi-file-earmark-text',
+                    color: 'blue'
+                },
+                {
+                    title: 'Active MRR',
+                    value: safeGet(kpis[0], 'total_mrr', 0),
+                    icon: 'bi-telephone',
+                    color: 'green'
+                },
+                {
+                    title: 'New Business',
+                    value: safeGet(kpis[0], 'new_business', 0),
+                    icon: 'bi-pie-chart',
+                    color: 'green'
+                },
+                {
+                    title: 'Funnel Size',
+                    value: safeGet(kpis[0], 'total_deals', 0),
+                    icon: 'bi-currency-rupee',
+                    color: 'yellow'
+                },
+                {
+                    title: 'Total Leads',
+                    value: safeGet(kpis[0], 'total_leads', 0),
+                    icon: 'bi-currency-rupee',
+                    color: 'yellow'
+                },
+                {
+                    title: 'Converted Leads',
+                    value: safeGet(kpis[0], 'total_users', 0),
+                    icon: 'bi-currency-rupee',
+                    color: 'yellow'
+                }
+            ];
 
-        // Card configuration with endpoints and headers
+            statsGridRow0.innerHTML = firstStats.map(stat => `
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xxl-2">
+                    <div class="stat-card clickable" data-title="${stat.title}" onclick="openSidebar('${stat.title}')">
+                        <div class="stat-info">
+                            <h6>${stat.title}</h6>
+                            <h3 class="large">${stat.value || 0}</h3>
+                        </div>
+                        <div class="stat-icon large ${stat.color}">
+                            <i class="${stat.icon}"></i>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderStatsRow2(kpis) {
+            // console.log(kpis);
+            const statsRow2 = document.getElementById('statsGridRow2');
+            const smallStats = [
+                { title: 'New', value: safeGet(kpis[0], 'new_contacts', 0), icon: 'bi-calendar-check', color: 'blue' },
+                { title: 'Active', value: safeGet(kpis[0], 'active_contacts', 0), icon: 'bi-person-plus', color: 'blue' },
+                { title: 'Retargeting', value: safeGet(kpis[0], 'closed_contacts', 0), icon: 'bi-check-circle', color: 'green' },
+                { title: 'Urgent', value: safeGet(kpis[0], 'urgent_contacts', 0), icon: 'bi-clock-history', color: 'yellow' },
+                { title: 'Not Contacted', value: safeGet(kpis[0], 'not_contacted_contacts', 0), icon: 'bi-file-earmark-arrow-up', color: 'orange' },
+                { title: 'Contacted', value: safeGet(kpis[0], 'contacted_contacts', 0), icon: 'bi-file-earmark-arrow-up', color: 'orange' }
+            ];
+
+            statsRow2.innerHTML = smallStats.map(stat => `
+                <div class="stat-card clickable" data-title="${stat.title}" onclick="openSidebar('${stat.title}')">
+                    <div class="stat-info">
+                        <h6>${stat.title}</h6>
+                        <h3>${stat.value || 0}</h3>
+                    </div>
+                    <div class="stat-icon ${stat.color}">
+                        <i class="${stat.icon}"></i>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function totalFunnelValue(kpie) {
+            const totalFunnelValue = document.getElementById('totalFunnelValue');
+            const largeStats = [
+                {
+                    title: 'Total No. of Prospects Added In Deals',
+                    value: safeGet(kpie[0], 'total_deals', 0),
+                    icon: 'bi-plus-circle',
+                    color: 'blue',
+                    clickable: false
+                },
+                {
+                    title: 'Total Funnel Expected Value',
+                    value: safeGet(kpie[0], 'total_deal_amount', 0),
+                    icon: 'bi-currency-rupee',
+                    color: 'yellow',
+                    clickable: false
+                },
+                {
+                    title: 'Deals Lost',
+                    value: safeGet(kpie[0], 'total_deal_won', 0),
+                    icon: 'bi-x-circle',
+                    color: 'red',
+                    clickable: true,
+                    onClick: "applyDealsFilter('lost')"
+                },
+                {
+                    title: 'Deals Won',
+                    value: safeGet(kpie[0], 'total_deal_lost', 0),
+                    icon: 'bi-trophy',
+                    color: 'green',
+                    clickable: true,
+                    onClick: "applyDealsFilter('won')"
+                }
+            ];
+
+            totalFunnelValue.innerHTML = largeStats.map(stat => `
+                <div class="stat-card stat-card-large ${stat.clickable ? 'clickable' : ''}"
+                    ${stat.clickable ? `onclick="${stat.onClick}"` : ''}>
+                    <div class="stat-info">
+                        <h6>${stat.title}</h6>
+                        <h3 class="large">${stat.value || 0}</h3>
+                        ${stat.title === 'Deals Lost' && selectedDealsLostReason ? `<span class="selected-filter">Filter: ${selectedDealsLostReason}</span>` : ''}
+                        ${stat.title === 'Deals Won' && selectedDealsWonType ? `<span class="selected-filter">Type: ${selectedDealsWonType}</span>` : ''}
+                    </div>
+                    <div class="stat-icon large ${stat.color}">
+                        <i class="${stat.icon}"></i>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function headerCards(kpie) {
+            const headerCards = document.getElementById('header_card');
+            const largeStats = [
+                {
+                    title: 'Overdue Followups',
+                    value: safeGet(kpie, 'overdue', 0),
+                    icon: 'bi-exclamation-triangle',
+                    color: 'red',
+                    category: 'overdue'
+                },
+                {
+                    title: 'Today Due Followups',
+                    value: safeGet(kpie, 'today', 0),
+                    icon: 'bi-calendar-check',
+                    color: 'blue',
+                    category: 'today'
+                },
+                {
+                    title: 'This Week Due Followup',
+                    value: safeGet(kpie, 'week', 0),
+                    icon: 'bi-calendar-week',
+                    color: 'green',
+                    category: 'week'
+                },
+                {
+                    title: 'Next 30 Days Due',
+                    value: safeGet(kpie, 'month', 0),
+                    icon: 'bi-calendar-range',
+                    color: 'yellow',
+                    category: 'next30'
+                }
+            ];
+
+            headerCards.innerHTML = largeStats.map(stat => `
+                <div class="stat-card stat-card-large" style="flex-direction:column; align-items:flex-start;">
+                    <div style="width:100%; display:flex; justify-content:space-between; align-items:center;">
+                        <div class="stat-info">
+                            <h6>${stat.title}</h6>
+                            <h3 class="large">${stat.value || 0}</h3>
+                        </div>
+                        <div class="stat-icon large ${stat.color}">
+                            <i class="bi ${stat.icon}"></i>
+                        </div>
+                    </div>
+                    <hr style="width:100%; margin:10px 0;">
+                    <a href="javascript:void(0)" onclick="filterTasksByCategory('${stat.category}')"
+                       class="text-primary"
+                       style="font-size:13px; text-decoration:underline; cursor:pointer;">
+                       <i class="bi bi-list-ul"></i> View List
+                    </a>
+                </div>
+            `).join('');
+        }
+
+        // ============ SIDEBAR FUNCTIONS ============
+        async function openSidebar(cardTitle) {
+            const config = cardConfig[cardTitle];
+            if (!config) {
+                console.error('No configuration found for:', cardTitle);
+                return;
+            }
+
+            document.getElementById('sidebar-title').textContent = cardTitle;
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('sidebar-table').style.display = 'none';
+
+            document.getElementById('sidebar').classList.add('open');
+            closeItemsSidebar();
+
+            const queryParams = {
+                assigned_to: currentFilters.sales_person,
+                create_start: currentFilters.date_from,
+                create_end: currentFilters.date_to,
+                ...config.queryParams
+            };
+
+            try {
+                const response = await callApi(config.endpoint, queryParams, 'GET');
+                const headersHtml = config.headers.map(header => `<th>${header}</th>`).join('');
+                document.getElementById('sidebar-table-header').innerHTML = `<tr>${headersHtml}</tr>`;
+
+                const tableBody = document.getElementById('sidebar-table-body');
+                tableBody.innerHTML = '';
+
+                let dataArray = [];
+                if (response) {
+                    if (response.contacts && Array.isArray(response.contacts)) {
+                        dataArray = response.contacts;
+                    } else if (response.users && Array.isArray(response.users)) {
+                        dataArray = response.users;
+                    } else if (response.data && Array.isArray(response.data)) {
+                        dataArray = response.data;
+                    } else if (response.deals && Array.isArray(response.deals)) {
+                        dataArray = response.deals;
+                    } else if (Array.isArray(response)) {
+                        dataArray = response;
+                    }
+                }
+
+                if (dataArray.length > 0) {
+                    dataArray.forEach((item, index) => {
+                        const row = document.createElement('tr');
+                        const serialCell = document.createElement('td');
+                        serialCell.textContent = index + 1;
+                        row.appendChild(serialCell);
+
+                        config.headers.slice(1).forEach(header => {
+                            const cell = document.createElement('td');
+                            let value = extractValue(item, header, config.endpoint);
+
+                            if (header === 'Status' && item.status_color) {
+                                cell.innerHTML = `<span class="badge" style="background-color: ${item.status_color}; color: #fff;">${value || ''}</span>`;
+                            } else if (header === 'Source' && item.source_color) {
+                                cell.innerHTML = `<span class="badge" style="background-color: ${item.source_color}; color: #fff;">${value || ''}</span>`;
+                            } else if (header === 'Name') {
+                                const contactId = item.id || '';
+                                if (contactId) {
+                                    cell.innerHTML = `<a href="/sale_contacts?action=viewcontact&id=${contactId}" target="_blank">${value}</a>`;
+                                } else {
+                                    cell.textContent = value;
+                                }
+                            } else if (header === 'Total Business' && config.endpoint === 'business_users') {
+                                const userId = item.userid || '';
+                                if (userId) {
+                                    const displayValue = formatCurrency(value);
+                                    cell.innerHTML = `
+                                        <a href="javascript:void(0)" 
+                                        onclick="showUserInvoices('${userId}', '${escapeHtml(item.fullname || '')} ${escapeHtml(item.last_name || '')}')"
+                                        style="color: var(--primary-color); text-decoration: none; cursor: pointer;"
+                                        onmouseover="this.style.textDecoration='underline'"
+                                        onmouseout="this.style.textDecoration='none'">
+                                            ${displayValue}
+                                        </a>
+                                    `;
+                                } else {
+                                    cell.textContent = value;
+                                }
+                            } else {
+                                cell.textContent = value;
+                            }
+
+                            cell.setAttribute('data-field', header);
+                            cell.setAttribute('data-value', value);
+                            row.appendChild(cell);
+                        });
+
+                        if (index % 2 === 0) {
+                            row.classList.add('even-row');
+                        } else {
+                            row.classList.add('odd-row');
+                        }
+
+                        tableBody.appendChild(row);
+                    });
+
+                    const countRow = document.createElement('tr');
+                    const countCell = document.createElement('td');
+                    countCell.colSpan = config.headers.length;
+                    countCell.className = 'text-center text-muted small';
+                    countCell.innerHTML = `<i class="bi bi-info-circle"></i> Showing ${dataArray.length} records`;
+                    countRow.appendChild(countCell);
+                    tableBody.appendChild(countRow);
+                } else {
+                    const noDataRow = document.createElement('tr');
+                    const noDataCell = document.createElement('td');
+                    noDataCell.colSpan = config.headers.length;
+                    noDataCell.className = 'text-center text-muted py-5';
+                    noDataCell.innerHTML = `
+                        <i class="bi bi-inbox display-4 d-block mb-2"></i>
+                        <div>No data found for the selected criteria</div>
+                        <small class="text-muted">Try adjusting your filters or date range</small>
+                    `;
+                    noDataRow.appendChild(noDataCell);
+                    tableBody.appendChild(noDataRow);
+                }
+
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('sidebar-table').style.display = 'table';
+                document.getElementById('sidebar').classList.add('open');
+                closeItemsSidebar();
+
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                document.getElementById('loading').style.display = 'none';
+                const errorRow = `<tr><td colspan="${config.headers.length}" class="text-center text-danger py-4">
+                    <i class="bi bi-exclamation-triangle"></i> Error loading data: ${error.message || 'Unknown error'}
+                </td></tr>`;
+                document.getElementById('sidebar-table-body').innerHTML = errorRow;
+            }
+        }
+
+        // Card configuration
         const cardConfig = {
             'Total Business': {
                 endpoint: 'business_users',
@@ -3177,12 +3745,10 @@ $staffList = $person['available_staff'] ?? [];
             },
             'Funnel Size': {
                 endpoint: 'deal',
-                // queryParams: { item_type: 'include', data_type: 'new' },
                 headers: ['#', 'Deal ID', 'Contact Name', 'Deal Name', 'Deal Amount', 'Assigned to', 'Deal Stage']
             },
             'Total Leads': {
                 endpoint: 'contact',
-                // queryParams: { item_type: 'include', data_type: 'new' },
                 headers: ['#', 'Name', 'Company', 'Location', 'Created At', 'Assigned to', 'Status', 'Source', 'Userid', 'Partner', 'MRR', 'Active MRR', 'Total Business', 'Cloud (A)', 'Cloud (D)', 'Customer From', 'Account Manager', 'Business Type', 'Employee Size', 'Monthly Spend', 'Title', 'Usecase', 'SMS Verified', 'AC Verified', 'Followup Time', 'Followup Message']
             },
             'Converted Leads': {
@@ -3219,47 +3785,13 @@ $staffList = $person['available_staff'] ?? [];
                 endpoint: 'contact',
                 queryParams: { contact_status_id: 58 },
                 headers: ['#', 'Name', 'Company', 'Location', 'Created At', 'Assigned to', 'Status', 'Source', 'Userid', 'Partner', 'MRR', 'Active MRR', 'Total Business', 'Cloud (A)', 'Cloud (D)', 'Customer From', 'Account Manager', 'Business Type', 'Employee Size', 'Monthly Spend', 'Title', 'Usecase', 'SMS Verified', 'AC Verified', 'Followup Time', 'Followup Message']
-            },
-            'Junk': {
-                endpoint: 'contact',
-                queryParams: { contact_status_id: 59 },
-                headers: ['#', 'Name', 'Company', 'Location', 'Created At', 'Assigned to', 'Status', 'Source', 'Userid', 'Partner', 'MRR', 'Active MRR', 'Total Business', 'Cloud (A)', 'Cloud (D)', 'Customer From', 'Account Manager', 'Business Type', 'Employee Size', 'Monthly Spend', 'Title', 'Usecase', 'SMS Verified', 'AC Verified', 'Followup Time', 'Followup Message']
-            },
-            'Meeting Joined': {
-                endpoint: 'business_users',
-                queryParams: { item_type: 'include', data_type: 'new' },
-                headers: ['#', 'User ID', 'Customer Name', 'Total Business', 'Total MRR']
-            },
-            'Meeting Not Joined': {
-                endpoint: 'business_users',
-                queryParams: { item_type: 'include', data_type: 'new' },
-                headers: ['#', 'User ID', 'Customer Name', 'Total Business', 'Total MRR']
-            },
-            'Payment Done': {
-                endpoint: 'business_users',
-                queryParams: { item_type: 'include', data_type: 'new' },
-                headers: ['#', 'User ID', 'Customer Name', 'Total Business', 'Total MRR']
-            },
-            'POC': {
-                endpoint: 'business_users',
-                queryParams: { item_type: 'include', data_type: 'new' },
-                headers: ['#', 'User ID', 'Customer Name', 'Total Business', 'Total MRR']
-            },
-            'Negotiation And Review': {
-                endpoint: 'business_users',
-                queryParams: { item_type: 'include', data_type: 'new' },
-                headers: ['#', 'User ID', 'Customer Name', 'Total Business', 'Total MRR']
             }
         };
 
-        // Define detailed field mappings for each card type based on actual API response
         const fieldMappings = {
-
-            // Contact endpoints mapping (New, Active, Retargeting, Urgent, Not Contacted, Contacted, Junk)
             contact: {
-                '#': 'id', // For serial number
+                '#': 'id',
                 'Name': function (item) {
-                    // Combine first_name and last_name
                     const firstName = item.first_name || '';
                     const lastName = item.last_name || '';
                     const fullName = item.fullname || '';
@@ -3348,8 +3880,6 @@ $staffList = $person['available_staff'] ?? [];
                     return item.id || '';
                 },
                 'Contact Name': function (item) {
-                    return item.followupmessage || '';
-
                     const firstName = item.contact_first_name || '';
                     const lastName = item.contact_last_name || '';
                     const fullName = item.fullname || '';
@@ -3371,8 +3901,6 @@ $staffList = $person['available_staff'] ?? [];
                     return item.deal_stage || '';
                 }
             },
-
-            // Business users endpoints mapping (Meeting Joined, Meeting Not Joined, etc.)
             business_users: {
                 '#': 'id',
                 'User ID': function (item) {
@@ -3394,7 +3922,6 @@ $staffList = $person['available_staff'] ?? [];
                     return item.total_mrr || '0';
                 }
             },
-            // Deal endpoints mapping (Funnel Size)
             deal: {
                 '#': 'id',
                 'Deal ID': function (item) {
@@ -3406,7 +3933,6 @@ $staffList = $person['available_staff'] ?? [];
                     if (firstName || lastName) {
                         return `${firstName} ${lastName}`.trim();
                     }
-                    // Try to get from contact object if available
                     if (item.contact && item.contact.first_name) {
                         return `${item.contact.first_name || ''} ${item.contact.last_name || ''}`.trim();
                     }
@@ -3427,87 +3953,41 @@ $staffList = $person['available_staff'] ?? [];
             }
         };
 
-
-        function performance_overview(emp_target) {
-            let totalTarget = 0;
-            let totalAchieved = 0;
-
-            emp_target.forEach(item => {
-                totalTarget += Number(item.target_business || 0);
-                totalAchieved += Number(item.achived_buisness || 0);
-            });
-
-            const remainingTarget = Math.max(totalTarget - totalAchieved, 0);
-
-            const achievedPercent = totalTarget > 0
-                ? ((totalAchieved / totalTarget) * 100).toFixed(1)
-                : 0;
-
-            // Update center text
-            document.getElementById('achievementPercent').innerText = `${achievedPercent}%`;
-
-            // Update legend values
-            document.getElementById('targetAchieved').innerText = formatINR(totalAchieved);
-            document.getElementById('remainingTarget').innerText = formatINR(remainingTarget);
-
-            // Render chart
-            salesTargetOverviewGraph({
-                achieved: totalAchieved,
-                remaining: remainingTarget
-            });
-        }
-
-
-        // Update the extractValue function to handle function mappings
         function extractValue(item, header, endpointType) {
-            // console.log(endpointType);
-            // Special case for serial number - handled separately
             if (header === '#') {
-                return ''; // Will be handled in the main function
+                return '';
             }
 
-            // Get the mapping for this endpoint type
             const mapping = fieldMappings[endpointType];
-            // console.log(mapping);
+            if (!mapping) return '';
 
-            if (!mapping) {
-                console.warn(`No mapping found for endpoint type: ${endpointType}`);
-                return '';
-            }
-
-            // Get the field mapper
             const fieldMapper = mapping[header];
-
-            if (!fieldMapper) {
-                console.warn(`No field mapping found for header: ${header}`);
-                return '';
-            }
+            if (!fieldMapper) return '';
 
             let value;
-
-            // Check if mapper is a function or a string
             if (typeof fieldMapper === 'function') {
-                // Call the function to get the value
                 value = fieldMapper(item);
             } else {
-                // Direct property access
-                value = item[fieldMapper] || '';
+                value = item[fieldMapper];
             }
 
-            // Format special values
+            if (value === null || value === undefined) {
+                return '';
+            }
+
             return formatValue(value, header);
         }
 
-        // Update formatValue function for better formatting
         function formatValue(value, header) {
-            if (value === null || value === undefined || value === '') {
+            if (value === null || value === undefined || value === '' || value === 'undefined') {
                 return '';
             }
 
-            // Convert to string first
             const stringValue = String(value).trim();
+            if (stringValue === '') {
+                return '';
+            }
 
-            // Handle boolean/verification fields
             if (header.includes('Verified') || header === 'AC Verified') {
                 if (stringValue === '1' || stringValue.toLowerCase() === 'true' || stringValue.toLowerCase() === 'yes') {
                     return 'Yes';
@@ -3516,12 +3996,10 @@ $staffList = $person['available_staff'] ?? [];
                 }
             }
 
-            // Handle numeric fields - add currency formatting
             if (header.includes('Business') || header.includes('Amount') || header.includes('MRR') || header.includes('Spend')) {
                 const numValue = parseFloat(stringValue.replace(/[^\d.-]/g, ''));
                 if (!isNaN(numValue)) {
                     if (header === 'Total Business' || header === 'Amount') {
-                        // Format as Indian Rupees
                         return numValue.toLocaleString('en-IN', {
                             style: 'currency',
                             currency: 'INR',
@@ -3537,7 +4015,6 @@ $staffList = $person['available_staff'] ?? [];
                 }
             }
 
-            // Handle count fields
             if (header.includes('Cloud (A)') || header.includes('Cloud (D)') || header.includes('Count')) {
                 const numValue = parseInt(stringValue);
                 if (!isNaN(numValue)) {
@@ -3545,16 +4022,11 @@ $staffList = $person['available_staff'] ?? [];
                 }
             }
 
-            // Handle dates - try to parse and format
             if (header.includes('Created') || header.includes('Time') || header.includes('From')) {
-                // Remove "Ago" text if present
                 const cleanDateStr = stringValue.replace(/ Days? Ago/, '').trim();
-
                 if (cleanDateStr.match(/^\d+$/)) {
-                    // If it's just a number (like "310"), return as is
                     return stringValue;
                 } else if (stringValue.match(/\d{4}-\d{2}-\d{2}/)) {
-                    // Try to parse ISO-like date
                     try {
                         const date = new Date(stringValue.replace(' ', 'T'));
                         if (!isNaN(date.getTime())) {
@@ -3573,420 +4045,97 @@ $staffList = $person['available_staff'] ?? [];
             return stringValue;
         }
 
-
-        function renderStatsRow2(kpis) {
-            // console.log(kpis);
-
-            const statsRow2 = document.getElementById('statsGridRow2');
-
-            const smallStats = [
-                { title: 'New', value: kpis.new_contacts, icon: 'bi-calendar-check', color: 'blue' },
-                { title: 'Active', value: kpis.active_contacts, icon: 'bi-person-plus', color: 'blue' },
-                { title: 'Retargeting', value: kpis.closed_contacts, icon: 'bi-check-circle', color: 'green' },
-                { title: 'Urgent', value: kpis.urgent_contacts, icon: 'bi-clock-history', color: 'yellow' },
-                { title: 'Not Contacted', value: kpis.not_contacted_contacts, icon: 'bi-file-earmark-arrow-up', color: 'orange' },
-                { title: 'Contacted', value: kpis.contacted_contacts, icon: 'bi-file-earmark-arrow-up', color: 'orange' },
-                { title: 'Junk', value: kpis.junk_contacts, icon: 'bi-file-earmark-arrow-up', color: 'orange' },
-                { title: 'Meeting Joined', value: kpis.meeting_joined, icon: 'bi-file-earmark-arrow-up', color: 'orange' },
-                { title: 'Meeting Not Joined', value: kpis.meeting_not_joined, icon: 'bi-file-earmark-arrow-up', color: 'orange' },
-                { title: 'Payment Done', value: kpis.payment_done, icon: 'bi-file-earmark-arrow-up', color: 'orange' },
-                { title: 'POC', value: kpis.poc, icon: 'bi-file-earmark-arrow-up', color: 'orange' },
-                { title: 'Negotiation And Review', value: kpis.negotiation_and_review, icon: 'bi-file-earmark-arrow-up', color: 'orange' },
-            ];
-
-            statsRow2.innerHTML = smallStats.map(stat => `
-                <div class="stat-card" data-title="${stat.title}">
-                    <div class="stat-info">
-                        <h6>${stat.title}</h6>
-                        <h3>${stat.value}</h3>
-                    </div>
-                    <div class="stat-icon ${stat.color}">
-                        <i class="${stat.icon}"></i>
-                    </div>
-                </div>
-            `).join('');
-
-            // Add click event listeners to all stat cards
-            document.querySelectorAll('.stat-card').forEach(card => {
-                card.addEventListener('click', function () {
-                    const title = this.getAttribute('data-title');
-                    openSidebar(title);
-                });
-            });
-        }
-
-        let includeInvoice = 0; // default = Exclude invoices
-        // let currentUserId = null;
-        // let currentUserName = null;
-
-
-
-
-        async function loadSidebarData() {
-            try {
-                document.getElementById('loading').style.display = 'block';
-
-                const queryParams = {
-                    userid: userId,
-                    create_start: currentFilters.date_from,
-                    create_end: currentFilters.date_to,
-                    include: includeInvoice, // 🔥 0 or 1
-                    groupby: 'invoice'
-                };
-
-                const response = await callApi('/deal', queryParams, 'GET');
-
-                renderSidebarTable(response.data);
-            } catch (err) {
-                console.error(err);
-            } finally {
-                document.getElementById('loading').style.display = 'none';
-            }
-        }
-
-
-
-        // Function to open sidebar and fetch data
-        async function openSidebar(cardTitle) {
-            const config = cardConfig[cardTitle];
-            if (!config) {
-                console.error('No configuration found for:', cardTitle);
-                return;
-            }
-
-            // Set sidebar title
-            document.getElementById('sidebar-title').textContent = cardTitle;
-
-            // Show loading
-            document.getElementById('loading').style.display = 'block';
-            document.getElementById('sidebar-table').style.display = 'none';
-            document.getElementById('sidebar-title').textContent = `Loading ${cardTitle}...`;
-
-            // Open sidebar immediately with loading state
-            document.getElementById('sidebar').classList.add('open');
-            closeItemsSidebar();
-
-            // Build query parameters
-            const queryParams = {
-                assigned_to: currentFilters.sales_person,
-                create_start: currentFilters.date_from,
-                create_end: currentFilters.date_to,
-                ...config.queryParams
-            };
-
-            try {
-                // Fetch data
-                const response = await callApi(config.endpoint, queryParams, 'GET', {
-                    debug: true
-                });
-
-                // Render table headers
-                const headersHtml = config.headers.map(header =>
-                    `<th>${header}</th>`
-                ).join('');
-                document.getElementById('sidebar-table-header').innerHTML = `<tr>${headersHtml}</tr>`;
-
-                // Render table body
-                const tableBody = document.getElementById('sidebar-table-body');
-                tableBody.innerHTML = '';
-
-                let dataArray = [];
-
-                // Extract data from response (handle different response structures)
-                if (response) {
-                    // console.log('API Response:', response);
-
-                    if (response.contacts && Array.isArray(response.contacts)) {
-                        dataArray = response.contacts;
-                    } else if (response.users && Array.isArray(response.users)) {
-                        dataArray = response.users;
-                    } else if (response.data && Array.isArray(response.data)) {
-                        dataArray = response.data;
-                    } else if (response.deals && Array.isArray(response.deals)) {
-                        dataArray = response.deals;
-                    } else if (Array.isArray(response)) {
-                        dataArray = response;
-                    } else {
-                        console.warn('Unexpected API response structure:', response);
-                    }
-                }
-
-                if (dataArray.length > 0) {
-                    // Debug: Show first item structure
-                    // console.log('First item structure:', dataArray[0]);
-
-                    // Process each item
-                    dataArray.forEach((item, index) => {
-                        const row = document.createElement('tr');
-
-                        // Add serial number column
-                        const serialCell = document.createElement('td');
-                        serialCell.textContent = index + 1;
-                        row.appendChild(serialCell);
-
-                        // Add other columns based on headers (skip the first # header since we already added it)
-                        config.headers.slice(1).forEach(header => {
-                            const cell = document.createElement('td');
-                            let value = extractValue(item, header, config.endpoint);
-
-                            // Special formatting for status and source badges
-                            if (header === 'Status' && item.status_color) {
-                                cell.innerHTML = `<span class="badge" style="background-color: ${item.status_color}; color: #fff;">${value || ''}</span>`;
-                            } else if (header === 'Source' && item.source_color) {
-                                cell.innerHTML = `<span class="badge" style="background-color: ${item.source_color}; color: #fff;">${value || ''}</span>`;
-                            } else if (header === 'Name') {
-                                // Add link to contact view
-                                const contactId = item.id || '';
-                                if (contactId) {
-                                    cell.innerHTML = `<a href="/sale_contacts?action=viewcontact&id=${contactId}" target="_blank">${value}</a>`;
-                                } else {
-                                    cell.textContent = value;
-                                }
-                            } else if (header === 'Total Business' && config.endpoint === 'business_users') {
-                                // console.log(item);
-                                // Make Total Business value clickable
-                                const userId = item.userid || '';
-                                if (userId) {
-                                    // Format the value for display
-                                    const displayValue = formatCurrency(value);
-
-                                    // Make it clickable with hover effect
-                                    cell.innerHTML = `
-                                    <a href="javascript:void(0)" 
-                                    onclick="showUserInvoices('${userId}', '${escapeHtml(item.fullname || '')} ${escapeHtml(item.last_name || '')}')"
-                                    style="color: var(--primary-color); text-decoration: none; cursor: pointer;"
-                                    onmouseover="this.style.textDecoration='underline'"
-                                    onmouseout="this.style.textDecoration='none'">
-                                        ${displayValue}
-                                    </a>
-                                `;
-                                } else {
-                                    cell.textContent = value;
-                                }
-                            } else {
-                                cell.textContent = value;
-                            }
-
-                            // Add data attributes for debugging
-                            cell.setAttribute('data-field', header);
-                            cell.setAttribute('data-value', value);
-
-                            row.appendChild(cell);
-                        });
-
-                        // Add row classes for styling
-                        if (index % 2 === 0) {
-                            row.classList.add('even-row');
-                        } else {
-                            row.classList.add('odd-row');
-                        }
-
-                        tableBody.appendChild(row);
-                    });
-
-                    // Show record count
-                    const countRow = document.createElement('tr');
-                    const countCell = document.createElement('td');
-                    countCell.colSpan = config.headers.length;
-                    countCell.className = 'text-center text-muted small';
-                    countCell.innerHTML = `<i class="bi bi-info-circle"></i> Showing ${dataArray.length} records`;
-                    countRow.appendChild(countCell);
-                    tableBody.appendChild(countRow);
-
-                } else {
-                    // No data found
-                    const noDataRow = document.createElement('tr');
-                    const noDataCell = document.createElement('td');
-                    noDataCell.colSpan = config.headers.length;
-                    noDataCell.className = 'text-center text-muted py-5';
-                    noDataCell.innerHTML = `
-                <i class="bi bi-inbox display-4 d-block mb-2"></i>
-                <div>No data found for the selected criteria</div>
-                <small class="text-muted">Try adjusting your filters or date range</small>
-            `;
-                    noDataRow.appendChild(noDataCell);
-                    tableBody.appendChild(noDataRow);
-                }
-
-                // Hide loading and show table
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('sidebar-table').style.display = 'table';
-
-                // Open sidebar
-                document.getElementById('sidebar').classList.add('open');
-                closeItemsSidebar();
-
-            } catch (error) {
-                console.error('Error fetching data:', error);
-                document.getElementById('loading').style.display = 'none';
-                const errorRow = `<tr><td colspan="${config.headers.length}" class="text-center text-danger py-4">
-            <i class="bi bi-exclamation-triangle"></i> Error loading data: ${error.message || 'Unknown error'}
-            </td></tr>`;
-                document.getElementById('sidebar-table-body').innerHTML = errorRow;
-            }
-        }
-
-        function closeSidebar() {
-            document.getElementById('sidebar').classList.remove('open');
-            // Also close items sidebar when main closes
-            closeItemsSidebar();
-        }
-
-        function formatCurrency(value) {
-            if (!value) return '₹ 0';
-
-            // Check if value is already formatted
-            if (typeof value === 'string' && value.includes('₹')) {
-                return value;
-            }
-
-            const numValue = parseFloat(value);
-            if (isNaN(numValue)) return '₹ 0';
-
-            return `₹ ${numValue.toLocaleString('en-IN', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            })}`;
-        }
-        function escapeHtml(text) {
-            const map = {
-                '&': '&amp;',
-                '<': '&lt;',
-                '>': '&gt;',
-                '"': '&quot;',
-                "'": '&#039;'
-            };
-            return text.replace(/[&<>"']/g, function (m) { return map[m]; });
-        }
-
-
-        // Add this new function to show user invoices
+        // ============ INVOICE FUNCTIONS ============
         async function showUserInvoices(userId, userName) {
-
             currentUserId = userId;
             currentUserName = userName;
+
             try {
-                // Update sidebar title based on toggle
                 document.getElementById('sidebar-title').textContent =
                     includeInvoice === 1
                         ? `Include Invoices - ${userName}`
                         : `Exclude Invoices - ${userName}`;
 
-                // Show loading
                 document.getElementById('loading').style.display = 'block';
                 document.getElementById('sidebar-table').style.display = 'none';
 
-                // Build query parameters (FIXED 🔥)
                 const queryParams = {
                     userid: userId,
                     create_start: currentFilters.date_from,
                     create_end: currentFilters.date_to,
-                    include: includeInvoice, // ✅ dynamic now
+                    include: includeInvoice,
                     groupby: 'invoice'
                 };
 
-                // console.log('Fetching invoices with params:', queryParams);
-
-                // Fetch invoices
                 const response = await callApi('business_users_invoices', queryParams);
-
-                // console.log('Invoices response:', response);
-
-                // Define headers for invoices table
                 const invoiceHeaders = ['#', 'Invoicenum', 'Date', 'Due Date', 'Paid Date', 'Amount', 'Notes', 'Status'];
 
-                // Render table headers
-                const headersHtml = invoiceHeaders.map(header =>
-                    `<th>${header}</th>`
-                ).join('');
+                const headersHtml = invoiceHeaders.map(header => `<th>${header}</th>`).join('');
                 document.getElementById('sidebar-table-header').innerHTML = `<tr>${headersHtml}</tr>`;
 
-                // Render table body
                 const tableBody = document.getElementById('sidebar-table-body');
                 tableBody.innerHTML = '';
 
                 if (response && response.invoiceInfo && Array.isArray(response.invoiceInfo) && response.invoiceInfo.length > 0) {
-                    // Sort invoices by date (newest first)
                     response.invoiceInfo.sort((a, b) => {
                         const dateA = new Date(a.date || '1970-01-01');
                         const dateB = new Date(b.date || '1970-01-01');
                         return dateB - dateA;
                     });
 
-                    // Process each invoice
                     response.invoiceInfo.forEach((invoice, index) => {
                         const row = document.createElement('tr');
-
-                        // Add serial number
                         const invoiceId = document.createElement('td');
                         invoiceId.textContent = invoice.id || '';
                         row.appendChild(invoiceId);
 
-                        // Add invoice number
                         const invNumCell = document.createElement('td');
                         invNumCell.textContent = invoice.invoicenum || '';
                         row.appendChild(invNumCell);
 
-                        // Add date
                         const dateCell = document.createElement('td');
                         dateCell.textContent = invoice.date || '';
                         row.appendChild(dateCell);
 
-                        // Add due date
                         const dueDateCell = document.createElement('td');
                         dueDateCell.textContent = invoice.duedate || '';
                         row.appendChild(dueDateCell);
 
-                        // Add paid date
                         const paidDateCell = document.createElement('td');
                         paidDateCell.textContent = invoice.datepaid || '';
                         row.appendChild(paidDateCell);
 
-
-                        // Amount column (clickable)
                         const amountCell = document.createElement('td');
                         const amount = parseFloat(invoice.total) || 0;
-
                         amountCell.innerHTML = `
-                        <span 
-                            class="invoice-amount"
-                            data-userid="${invoice.userid}"
-                            data-invoiceid="${invoice.id}"
-                            style="cursor:pointer;color:#2563EB;font-weight:600;"
-                        >
-                            Rs.${amount.toFixed(2)}
-                        </span>
+                            <span 
+                                class="invoice-amount"
+                                data-userid="${invoice.userid}"
+                                data-invoiceid="${invoice.id}"
+                                style="cursor:pointer;color:#2563EB;font-weight:600;"
+                            >
+                                Rs.${amount.toFixed(2)}
+                            </span>
                         `;
-
                         row.appendChild(amountCell);
 
-
-                        // Add notes
                         const notesCell = document.createElement('td');
                         notesCell.textContent = invoice.notes || '';
                         row.appendChild(notesCell);
 
-                        // Add status with badge
                         const statusCell = document.createElement('td');
                         const status = invoice.status || 'Unknown';
                         let badgeClass = '';
-                        let badgeColor = '';
-
                         if (status.toLowerCase() === 'paid') {
                             badgeClass = 'badge completed';
-                            badgeColor = '#10B981';
                         } else if (status.toLowerCase() === 'unpaid') {
                             badgeClass = 'badge overdue';
-                            badgeColor = '#EF4444';
                         } else {
                             badgeClass = 'badge pending';
-                            badgeColor = '#F59E0B';
                         }
-
                         statusCell.innerHTML = `<span class="${badgeClass}">${status}</span>`;
                         row.appendChild(statusCell);
 
-                        // Add row styling
                         if (index % 2 === 0) {
                             row.classList.add('even-row');
                         } else {
@@ -3996,7 +4145,6 @@ $staffList = $person['available_staff'] ?? [];
                         tableBody.appendChild(row);
                     });
 
-                    // Add summary row
                     const totalAmount = response.invoiceInfo.reduce((sum, invoice) => {
                         return sum + (parseFloat(invoice.total) || 0);
                     }, 0);
@@ -4013,101 +4161,90 @@ $staffList = $person['available_staff'] ?? [];
                     tableBody.appendChild(summaryRow);
 
                 } else {
-                    // No invoices found
                     const noDataRow = document.createElement('tr');
                     const noDataCell = document.createElement('td');
                     noDataCell.colSpan = invoiceHeaders.length;
                     noDataCell.className = 'text-center text-muted py-5';
                     noDataCell.innerHTML = `
-                <i class="bi bi-receipt display-4 d-block mb-2"></i>
-                <div>No invoices found for this user</div>
-                <small class="text-muted">No invoice data available for the selected period</small>
-            `;
+                        <i class="bi bi-receipt display-4 d-block mb-2"></i>
+                        <div>No invoices found for this user</div>
+                        <small class="text-muted">No invoice data available for the selected period</small>
+                    `;
                     noDataRow.appendChild(noDataCell);
                     tableBody.appendChild(noDataRow);
                 }
 
-                // Hide loading and show table
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('sidebar-table').style.display = 'table';
-
-                // Keep sidebar open (it should already be open from the business_users table)
                 document.getElementById('sidebar').classList.add('open');
 
             } catch (error) {
                 console.error('Error fetching user invoices:', error);
                 document.getElementById('loading').style.display = 'none';
-
                 const invoiceHeaders = ['#', 'Invoicenum', 'Date', 'Due Date', 'Paid Date', 'Amount', 'Notes', 'Status'];
                 const errorRow = `<tr><td colspan="${invoiceHeaders.length}" class="text-center text-danger py-4">
-            <i class="bi bi-exclamation-triangle"></i> Error loading invoices: ${error.message || 'Unknown error'}
-        </td></tr>`;
+                    <i class="bi bi-exclamation-triangle"></i> Error loading invoices: ${error.message || 'Unknown error'}
+                </td></tr>`;
                 document.getElementById('sidebar-table-body').innerHTML = errorRow;
                 document.getElementById('sidebar-table').style.display = 'table';
             }
         }
 
-        // Add this to your existing code to handle fetch errors globally
-        window.addEventListener('unhandledrejection', function (event) {
-            console.error('Unhandled promise rejection:', event.reason);
-            hideLoader();
+        // ============ SIDEBAR MANAGEMENT ============
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('open');
+            closeItemsSidebar();
+        }
 
-            // Reset all loading buttons
-            document.querySelectorAll('.btn-loading').forEach(btn => {
-                btn.classList.remove('btn-loading');
-                btn.disabled = false;
-            });
+        document.getElementById('sidebar-close').addEventListener('click', closeSidebar);
+
+        document.addEventListener('click', function (event) {
+            const sidebar = document.getElementById('sidebar');
+            const itemsSidebar = document.getElementById('itemsSidebar');
+
+            if (sidebar.classList.contains('open') &&
+                !sidebar.contains(event.target) &&
+                !event.target.closest('.stat-card') &&
+                !itemsSidebar.contains(event.target)) {
+                closeSidebar();
+            }
+
+            if (itemsSidebar.classList.contains('active') &&
+                !itemsSidebar.contains(event.target) &&
+                !event.target.closest('.invoice-amount')) {
+                closeItemsSidebar();
+            }
         });
-        // document.addEventListener('click', function (e) {
-        //     const el = e.target.closest('.invoice-amount');
-        //     if (!el) return;
 
-        //     const userId = el.dataset.userid;
-        //     const invoiceId = el.dataset.invoiceid;
-
-        //     fetchInvoiceItems(userId, invoiceId);
-
-        //     openItemsSidebar();
-        // });
-
+        // ============ INVOICE ITEMS ============
         document.addEventListener('click', function (e) {
             const el = e.target.closest('.invoice-amount');
             if (!el) return;
 
-            e.stopPropagation(); // Prevent event bubbling
-
+            e.stopPropagation();
             const userId = el.dataset.userid;
             const invoiceId = el.dataset.invoiceid;
 
             currentInvoiceUserId = userId;
             currentInvoiceId = invoiceId;
 
-            // First open main sidebar if not open
             if (!document.getElementById('sidebar').classList.contains('open')) {
-                // You might want to open the main sidebar first
-                // or handle this differently based on your requirements
                 return;
             }
 
-            // Fetch and display invoice items
             fetchInvoiceItems(userId, invoiceId).then(() => {
-                // Open the items sidebar
                 openItemsSidebar();
             });
         });
 
         function openItemsSidebar() {
-            // Only open if main sidebar is open
             const mainSidebar = document.getElementById('sidebar');
             if (!mainSidebar.classList.contains('open')) {
                 alert('Please open the main sidebar first.');
                 return;
             }
 
-            // Add active class to items sidebar
             document.getElementById('itemsSidebar').classList.add('active');
-
-            // Adjust main sidebar width to make room
             mainSidebar.style.width = '35%';
             mainSidebar.style.zIndex = '1000';
         }
@@ -4117,8 +4254,6 @@ $staffList = $person['available_staff'] ?? [];
             const mainSidebar = document.getElementById('sidebar');
 
             itemsSidebar.classList.remove('active');
-
-            // Reset main sidebar width
             if (mainSidebar.classList.contains('open')) {
                 mainSidebar.style.width = '65%';
             }
@@ -4126,8 +4261,8 @@ $staffList = $person['available_staff'] ?? [];
 
         function toggleInvoiceItems() {
             invoiceItemsInclude = invoiceItemsInclude === 1 ? 0 : 1;
-
             const btn = document.getElementById('toggleInvoiceItemsBtn');
+
             if (invoiceItemsInclude === 1) {
                 btn.innerText = 'Exclude Invoices';
                 btn.classList.remove('btn-outline-primary');
@@ -4138,25 +4273,10 @@ $staffList = $person['available_staff'] ?? [];
                 btn.classList.add('btn-outline-primary');
             }
 
-            // Reload invoice items if we have current invoice data
             if (currentInvoiceUserId && currentInvoiceId) {
                 fetchInvoiceItems(currentInvoiceUserId, currentInvoiceId);
             }
         }
-
-
-        document.getElementById('toggleInvoiceItemsBtn').addEventListener('click', () => {
-            invoiceItemsInclude = invoiceItemsInclude === 1 ? 0 : 1;
-
-            // Button label
-            document.getElementById('toggleInvoiceItemsBtn').textContent =
-                invoiceItemsInclude === 1 ? 'Exclude Invoices' : 'Include Invoices';
-
-            // Reload items
-            fetchInvoiceItems(currentInvoiceUserId, currentInvoiceId);
-        });
-
-
 
         async function fetchInvoiceItems(userId, invoiceId) {
             const queryParams = {
@@ -4169,13 +4289,11 @@ $staffList = $person['available_staff'] ?? [];
 
             try {
                 const json = await callApi('business_users_invoices', queryParams);
-
                 if (json.rcode !== "success") {
                     alert("Failed to load invoice items");
                     return;
                 }
 
-                // ✅ FILTER ONLY SAME invoiceid
                 const filteredItems = (json.invoiceInfo || []).filter(
                     item => String(item.invoiceid) === String(invoiceId)
                 );
@@ -4211,7 +4329,7 @@ $staffList = $person['available_staff'] ?? [];
                         </tr>
                     </thead>
                     <tbody>
-                `;
+            `;
 
             items.forEach(item => {
                 html += `
@@ -4229,54 +4347,11 @@ $staffList = $person['available_staff'] ?? [];
                             </button>
                         </td>
                     </tr>
-                    `;
+                `;
             });
 
             html += `</tbody></table>`;
             container.innerHTML = html;
-        }
-
-
-        document.addEventListener('click', async function (e) {
-            const btn = e.target.closest('.exclude-item-btn');
-            if (!btn) return;
-
-            e.stopPropagation();
-
-            const itemId = btn.dataset.itemid;
-            if (!itemId) return;
-
-            if (!confirm("Exclude this item?")) return;
-
-            btn.disabled = true;
-            btn.textContent = 'Excluding...';
-
-            try {
-                await excludeInvoiceItem(itemId);
-                btn.closest('tr')?.remove();
-            } catch (err) {
-                console.error(err);
-                alert("Failed to exclude item");
-                btn.disabled = false;
-                btn.textContent = 'Exclude';
-            }
-        });
-
-
-        async function excludeInvoiceItem(itemId) {
-            const params = {
-                is_include: "0",
-                itemid: String(itemId)
-            };
-
-            // 👇 force POST
-            const data = await callApi("update-invoice-item", params, "POST");
-
-            if (!data || data.rcode !== "success") {
-                throw new Error("Failed to update invoice item");
-            }
-
-            return data;
         }
 
         document.addEventListener('click', async (e) => {
@@ -4284,7 +4359,6 @@ $staffList = $person['available_staff'] ?? [];
             if (!btn) return;
 
             e.stopPropagation();
-
             const itemId = btn.dataset.itemid;
             const isIncludeValue = invoiceItemsInclude === 1 ? "0" : "1";
 
@@ -4298,14 +4372,11 @@ $staffList = $person['available_staff'] ?? [];
                 };
 
                 const res = await callApi("update-invoice-item", params, "POST");
-
                 if (res.rcode !== "success") {
                     throw new Error("API failed");
                 }
 
-                // Remove row after action
                 btn.closest('tr')?.remove();
-
             } catch (err) {
                 console.error(err);
                 alert("Failed to update item");
@@ -4316,7 +4387,6 @@ $staffList = $person['available_staff'] ?? [];
 
         function toggleInvoice() {
             includeInvoice = includeInvoice === 1 ? 0 : 1;
-
             const btn = document.getElementById('invoiceToggleBtn');
             const title = document.getElementById('sidebar-title');
 
@@ -4336,100 +4406,876 @@ $staffList = $person['available_staff'] ?? [];
                 console.warn('No user selected yet');
                 return;
             }
-            // 🔥 reload invoices for same user
+
             showUserInvoices(currentUserId, currentUserName);
         }
 
+        // ============ TARGET MANAGEMENT ============
+        const quarterMonthOrder = {
+            Q1: ['April', 'May', 'June'],
+            Q2: ['July', 'August', 'September'],
+            Q3: ['October', 'November', 'December'],
+            Q4: ['January', 'February', 'March']
+        };
 
-        // // Close sidebar function
+        function convertToQuarterWise(apiData) {
+            // console.log(apiData);
+            if (!Array.isArray(apiData)) return [];
+            const quarterMap = {};
 
-        // function closeSidebar() {
-        //     document.getElementById('sidebar').classList.add('open');
+            apiData.forEach(item => {
+                const key = `${item.employee_id}-${item.year}-${item.quarter}`;
+                if (!quarterMap[key]) {
+                    const months = quarterMonthOrder[item.quarter] || [];
+                    quarterMap[key] = {
+                        id: `target-${Object.keys(quarterMap).length + 1}`,
+                        rep: item.employee_name,
+                        year: item.year,
+                        quarter: `${item.quarter} (${months.join('-')})`,
+                        totalTargetBusiness: 0,
+                        totalTargetMRR: 0,
+                        achievedBusiness: 0,
+                        achievedMRR: 0,
+                        months: {}
+                    };
+                }
 
-        // }
+                quarterMap[key].months[item.month] = item;
+                quarterMap[key].totalTargetBusiness += Number(item.target_business || 0);
+                quarterMap[key].totalTargetMRR += Number(item.target_mrr || 0);
+                quarterMap[key].achievedBusiness += Number(item.achived_buisness || 0);
+                quarterMap[key].achievedMRR += Number(item.achived_mrr || 0);
+            });
 
+            return Object.values(quarterMap).map(q => {
+                const qKey = q.quarter.split(' ')[0];
+                const order = quarterMonthOrder[qKey] || [];
+                const m1 = q.months[order[0]] || {};
+                const m2 = q.months[order[1]] || {};
+                const m3 = q.months[order[2]] || {};
+                const achievementPercent = q.totalTargetBusiness
+                    ? Math.round((q.achievedBusiness / q.totalTargetBusiness) * 100)
+                    : 0;
 
-        // Initialize sidebar close button
-        document.getElementById('sidebar-close').addEventListener('click', closeSidebar);
-
-
-        // Close sidebar when clicking outside (optional)
-        document.addEventListener('click', function (event) {
-            const sidebar = document.getElementById('sidebar');
-            const itemsSidebar = document.getElementById('itemsSidebar');
-
-            if (sidebar.classList.contains('open') &&
-                !sidebar.contains(event.target) &&
-                !event.target.closest('.stat-card') &&
-                !itemsSidebar.contains(event.target)) {
-                closeSidebar();
-            }
-
-            // Close items sidebar when clicking outside
-            if (itemsSidebar.classList.contains('active') &&
-                !itemsSidebar.contains(event.target) &&
-                !event.target.closest('.invoice-amount')) {
-                closeItemsSidebar();
-            }
-        });
-
-
-        function renderKPICards(kpis) {
-            // console.log(kpis);
-            const statsGridRow0 = document.getElementById('statsGridRow0');
-
-            // const formData = getFormData();
-
-            // Row 1: 6 Large Cards
-            const firstStats = [
-                { title: 'Total Business', value: kpis.total_business, icon: 'bi-file-earmark-text', color: 'blue' },
-                { title: 'Active MRR', value: kpis.total_mrr, icon: 'bi-telephone', color: 'green' },
-                { title: 'New Business', value: kpis.new_business, icon: 'bi-pie-chart', color: 'green' },
-                { title: 'Funnel Size', value: kpis.total_deals, icon: 'bi-currency-rupee', color: 'yellow' },
-                { title: 'Total Leads', value: kpis.total_leads, icon: 'bi-currency-rupee', color: 'yellow' },
-                { title: 'Converted Leads', value: kpis.total_users, icon: 'bi-currency-rupee', color: 'yellow' }
-            ];
-            statsGridRow0.innerHTML = firstStats.map(stat => `
-                <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xxl-2">
-                    <div class="stat-card" data-title="${stat.title}">
-                        <div class="stat-info">
-                            <h6>${stat.title}</h6>
-                            <h3 class="large">${stat.value}</h3>
-                        </div>
-                        <div class="stat-icon large ${stat.color}">
-                            <i class="${stat.icon}"></i>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-
-            // Add click event listeners to all stat cards
-            document.querySelectorAll('.stat-card').forEach(card => {
-                card.addEventListener('click', function () {
-                    const title = this.getAttribute('data-title');
-                    openSidebar(title);
-                });
+                return {
+                    id: q.id,
+                    rep: q.rep,
+                    year: q.year,
+                    quarter: q.quarter,
+                    wholeTotalTarget: formatINR(q.totalTargetBusiness),
+                    targetMRR: formatINR(q.totalTargetMRR),
+                    wholeMonth1: formatINR(m1.target_business),
+                    wholeMonth2: formatINR(m2.target_business),
+                    wholeMonth3: formatINR(m3.target_business),
+                    mrrMonth1: formatINR(m1.target_mrr),
+                    mrrMonth2: formatINR(m2.target_mrr),
+                    mrrMonth3: formatINR(m3.target_mrr),
+                    achievedRevenue: formatINR(q.achievedBusiness),
+                    achievedMRR: formatINR(q.achievedMRR),
+                    achievement: `${achievementPercent}%`,
+                    status: getStatusFromAchievement(achievementPercent)
+                };
             });
         }
 
-        /////////////////////////////////////////////////////////////////////SIDEBAR TABLE END
+        function getStatusFromAchievement(percent) {
+            if (percent >= 100) return 'Ahead';
+            if (percent >= 85) return 'On Track';
+            if (percent >= 70) return 'Behind';
+            return 'At Risk';
+        }
 
+        function getStatusClass(status) {
+            switch (status) {
+                case 'Ahead': return 'ahead';
+                case 'On Track': return 'on-track';
+                case 'Behind': return 'behind';
+                case 'At Risk': return 'at-risk';
+                default: return 'at-risk';
+            }
+        }
 
+        function getProgressColor(status) {
+            switch (status) {
+                case 'On Track': return '#10B981';
+                case 'Behind': return '#EF4444';
+                case 'At Risk': return '#F59E0B';
+                default: return '#10B981';
+            }
+        }
+
+        function renderTargetsTable(targets) {
+            const tbody = document.querySelector('#targetsTable tbody');
+            tbody.innerHTML = targets.map((target, index) => `
+                <tr data-id="${target.id || index}" onclick="editTarget(${JSON.stringify(target).replace(/"/g, '&quot;')})">
+                    <td>${index + 1}</td>
+                    <td>${target.year}</td>
+                    <td>${target.quarter}</td>
+                    <td>${target.wholeTotalTarget || target.targetBusiness}</td>
+                    <td>${target.targetMRR}</td>
+                    <td style="text-align: center;">${target.wholeMonth1 || '-'}</td>
+                    <td style="text-align: center;">${target.wholeMonth2 || '-'}</td>
+                    <td style="text-align: center;">${target.wholeMonth3 || '-'}</td>
+                    <td style="text-align: center;">${target.mrrMonth1 || '-'}</td>
+                    <td style="text-align: center;">${target.mrrMonth2 || '-'}</td>
+                    <td style="text-align: center;">${target.mrrMonth3 || '-'}</td>
+                    <td>${target.achievedRevenue || target.achievedWhole}</td>
+                    <td>${target.achievedMRR}</td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <div class="progress-bar-custom">
+                                <div class="progress-fill" style="width: ${target.achievement}; background: ${getProgressColor(target.status)};"></div>
+                            </div>
+                            <span style="font-weight: 600;">${target.achievement}</span>
+                        </div>
+                    </td>
+                    <td><span class="badge ${getStatusClass(target.status)}">${target.status}</span></td>
+                    <td><button class="btn btn-sm btn-warning" onclick="event.stopPropagation(); manageTarget(${JSON.stringify(target).replace(/"/g, '&quot;')})">Manage</button></td>
+                </tr>
+            `).join('');
+        }
+
+        // ============ TARGET MODAL FUNCTIONS ============
+        let currentTargetData = null;
+
+        function openEditModal(target = null) {
+            const modal = document.getElementById('editTargetModal');
+            modal.classList.add('show');
+
+            const title = document.getElementById('editTargetModalTitle');
+            const submitBtn = document.getElementById('editTargetSubmitBtn');
+
+            if (target) {
+                currentTargetData = target;
+                title.textContent = 'Update Target';
+                submitBtn.textContent = 'Update Target';
+                document.getElementById('targetId').value = target.id || '';
+                document.getElementById('targetYear').value = target.year || '';
+                const quarterValue = target.quarter?.split(' ')[0];
+                document.getElementById('targetQuarter').value = quarterValue || '';
+                document.getElementById('wholeTotalTarget').value = parseAmount(target.wholeTotalTarget);
+            } else {
+                currentTargetData = null;
+                title.textContent = 'Add Target';
+                submitBtn.textContent = 'Save Target';
+                document.getElementById('editTargetForm').reset();
+            }
+        }
+
+        function closeEditModal() {
+            const modal = document.getElementById('editTargetModal');
+            modal.classList.remove('show');
+            currentTargetData = null;
+        }
+
+        function parseAmount(amountStr) {
+            if (typeof amountStr === 'number') return amountStr;
+            if (!amountStr) return 0;
+            const cleaned = amountStr.replace(/[₹,\s]/g, '');
+            if (cleaned.includes('Lk') || cleaned.includes('L')) {
+                return parseFloat(cleaned.replace(/Lk|L/g, '')) * 100000;
+            }
+            if (cleaned.includes('K')) {
+                return parseFloat(cleaned.replace('K', '')) * 1000;
+            }
+            return parseFloat(cleaned) || 0;
+        }
+
+        function editTarget(target) {
+            openEditModal(target);
+        }
+
+        async function saveTarget(event) {
+            event.preventDefault();
+            const form = document.getElementById('editTargetForm');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            const year = document.getElementById('targetYear').value;
+            const quarter = document.getElementById('targetQuarter').value;
+            const wholeTotalTarget = document.getElementById('wholeTotalTarget').value;
+
+            const data = {
+                year: year,
+                quarter: quarter,
+                total_sales_target: wholeTotalTarget
+            };
+
+            const isEdit = !!currentTargetData;
+            const method = isEdit ? 'PUT' : 'POST';
+
+            try {
+                const response = await callApi('sales-target', data, method);
+                if (response && response.rcode === 'success') {
+                    closeEditModal();
+                    loadDashboard();
+                    softAlert(`Target ${isEdit ? 'updated' : 'saved'} successfully`, 'success');
+                } else {
+                    softAlert(response?.rmessage || 'Something went wrong', 'error');
+                }
+            } catch (error) {
+                console.error(error);
+                softAlert('Error saving target', 'error');
+            }
+        }
+
+        // ============ TEAM TARGET FUNCTIONS ============
+        async function manageTarget(target) {
+            currentTeamTarget = target;
+            const quarterMatch = target.quarter?.match(/Q\d/);
+            const quarter = quarterMatch ? quarterMatch[0] : 'Q1';
+            const year = target.year || '2026';
+
+            document.getElementById('teamTargetHeader').textContent =
+                `Team Targets of Quarter - ${quarter} of ${year}`;
+
+            document.getElementById('teamTargetLoading').style.display = 'block';
+            document.getElementById('teamTargetsTableContainer').style.display = 'none';
+            document.getElementById('teamTargetFormContainer').style.display = 'none';
+
+            await loadTeamTargets(quarter, year);
+            openTeamTargetSidebar();
+        }
+
+        async function loadTeamTargets(quarter, year) {
+            try {
+                const tbody = document.getElementById('teamTargetsTableBody');
+                tbody.innerHTML = '';
+
+                document.getElementById('teamTargetLoading').style.display = 'block';
+                document.getElementById('teamTargetsTableContainer').style.display = 'none';
+
+                const response = await callApi('employee-sales-target');
+                if (!response?.data || !Array.isArray(response.data)) {
+                    throw new Error('Invalid API response');
+                }
+
+                const filteredTargets = response.data.filter(item =>
+                    String(item.year) === String(year) &&
+                    String(item.quarter) === String(quarter)
+                );
+
+                if (filteredTargets.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="8" style="text-align:center; padding:40px; color:#6b7280;">
+                                No team targets found for ${quarter} ${year}
+                            </td>
+                        </tr>
+                    `;
+                } else {
+                    filteredTargets.forEach((target, index) => {
+                        const row = document.createElement('tr');
+                        row.style.cursor = 'pointer';
+                        row.onclick = () => editTeamTarget(target);
+
+                        row.innerHTML = `
+                            <td style="padding:12px;">${index + 1}</td>
+                            <td style="padding:12px; font-weight:600;">
+                                ${target.employee_name || 'N/A'}
+                            </td>
+                            <td style="padding:12px;">${target.year}</td>
+                            <td style="padding:12px;">${target.quarter}</td>
+                            <td style="padding:12px; color:var(--primary-color); font-weight:600;">
+                                ${target.assigned_sales_target}
+                            </td>
+                            <td style="padding:12px;">${target.month_1 || 0}</td>
+                            <td style="padding:12px;">${target.month_2 || 0}</td>
+                            <td style="padding:12px;">${target.month_3 || 0}</td>
+                        `;
+
+                        tbody.appendChild(row);
+                    });
+                }
+
+                document.getElementById('teamTargetLoading').style.display = 'none';
+                document.getElementById('teamTargetsTableContainer').style.display = 'block';
+
+            } catch (error) {
+                console.error("Error loading team targets:", error);
+                document.getElementById('teamTargetLoading').style.display = 'none';
+                document.getElementById('teamTargetsTableContainer').innerHTML = `
+                    <div style="text-align:center; padding:20px; color:#ef4444;">
+                        Error loading team targets. Please try again.
+                    </div>
+                `;
+            }
+        }
+
+        function showTeamTargetForm() {
+            document.getElementById('teamTargetsTableContainer').style.display = 'none';
+            document.getElementById('teamTargetFormContainer').style.display = 'block';
+
+            if (currentTeamTarget) {
+                const quarterMatch = currentTeamTarget.quarter?.match(/Q\d/);
+                if (quarterMatch) {
+                    document.getElementById('targetQuarterForm').value = quarterMatch[0];
+                }
+                if (currentTeamTarget.year) {
+                    document.getElementById('targetYearForm').value = currentTeamTarget.year;
+                }
+            }
+        }
+
+        function hideTeamTargetForm() {
+            document.getElementById('teamTargetFormContainer').style.display = 'none';
+            document.getElementById('teamTargetsTableContainer').style.display = 'block';
+        }
+
+        async function handleTeamTargetSubmit(event) {
+            event.preventDefault();
+
+            const employeeId = document.getElementById('teamMemberSelect').value;
+            const year = document.getElementById('targetYearForm').value;
+            const quarter = document.getElementById('targetQuarterForm').value;
+            const targetAmount = document.getElementById('targetAmount').value;
+
+            if (!employeeId || !year || !quarter || !targetAmount) {
+                softAlert('Please fill all required fields', 'warning');
+                return;
+            }
+
+            const payload = {
+                employee_id: employeeId,
+                year: year,
+                quarter: quarter,
+                assigned_sales_target: targetAmount
+            };
+
+            const submitBtn = event.target.querySelector('.btn-save');
+            const originalText = submitBtn.textContent;
+
+            try {
+                submitBtn.textContent = 'Updating...';
+                submitBtn.disabled = true;
+
+                const isEdit = !!window.currentEditingTarget;
+                const response = await callApi(
+                    'employee-sales-target',
+                    payload,
+                    isEdit ? 'PUT' : 'POST'
+                );
+
+                if (!response || response.status === false) {
+                    throw new Error(response?.message || 'Update failed');
+                }
+
+                softAlert(`Team target ${isEdit ? 'updated' : 'added'} successfully`, 'success');
+                await loadTeamTargets(quarter, year);
+                resetTeamTargetForm();
+
+            } catch (error) {
+                console.error(error);
+                softAlert(error.message || 'Something went wrong', 'error');
+            } finally {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        }
+
+        function resetTeamTargetForm() {
+            document.getElementById('teamTargetForm').reset();
+            document.getElementById('teamMemberSelect').disabled = false;
+            document.getElementById('targetYearForm').disabled = false;
+            document.getElementById('targetQuarterForm').disabled = false;
+
+            const submitBtn = document.querySelector('#teamTargetForm .btn-save');
+            submitBtn.textContent = 'Add Team Target';
+
+            window.currentEditingTarget = null;
+            hideTeamTargetForm();
+        }
+
+        function editTeamTarget(target) {
+            console.log("Edit team target:", target);
+            window.currentEditingTarget = target;
+
+            document.getElementById('teamMemberSelect').value = target.employee_id;
+            document.getElementById('targetYearForm').value = target.year;
+            document.getElementById('targetQuarterForm').value = target.quarter;
+            document.getElementById('targetAmount').value =
+                String(target.overall_target).replace(/[₹,]/g, '');
+
+            document.getElementById('teamMemberSelect').disabled = true;
+            document.getElementById('targetYearForm').disabled = true;
+            document.getElementById('targetQuarterForm').disabled = true;
+
+            const submitBtn = document.querySelector('#teamTargetForm .btn-save');
+            submitBtn.textContent = 'Update Team Target';
+
+            showTeamTargetForm();
+        }
+
+        function openTeamTargetSidebar() {
+            document.getElementById('teamTargetOverlay').classList.add('show');
+            document.getElementById('teamTargetSidebar').classList.add('show');
+        }
+
+        function closeTeamTargetSidebar() {
+            document.getElementById('teamTargetOverlay').classList.remove('show');
+            document.getElementById('teamTargetSidebar').classList.remove('show');
+            currentTeamTarget = null;
+        }
+
+        // ============ DEALS FUNCTIONS ============
+        function toggleDealsTable(dealType) {
+            const lostTable = document.getElementById('dealsLostTable');
+            const wonTable = document.getElementById('dealsWonTable');
+
+            if (dealType === 'lost') {
+                lostTable.style.display = 'block';
+                wonTable.style.display = 'none';
+            } else {
+                lostTable.style.display = 'none';
+                wonTable.style.display = 'block';
+            }
+        }
+
+        async function applyDealsFilter(dealType) {
+            const dealStageId = dealType === 'lost' ? 155 : 154;
+            const { sales_person, date_from, date_to } = currentFilters;
+
+            try {
+                const dealData = await callApi('deal', {
+                    userid: sales_person,
+                    create_start: date_from,
+                    create_end: date_to,
+                    deal_stage_id: dealStageId
+                });
+
+                if (dealType === 'lost') {
+                    populateDealsTable(dealData, 'dealsLostTableBody');
+                    toggleDealsTable('lost');
+                } else {
+                    populateDealsTable(dealData, 'dealsWonTableBody');
+                    toggleDealsTable('won');
+                }
+            } catch (error) {
+                console.error('Error fetching deals:', error);
+                const tableBodyId = dealType === 'lost' ? 'dealsLostTableBody' : 'dealsWonTableBody';
+                document.getElementById(tableBodyId).innerHTML =
+                    `<tr><td colspan="7" class="text-center">Error loading deals</td></tr>`;
+            }
+        }
+
+        function populateDealsTable(deals, tableBodyId) {
+            const tbody = document.getElementById(tableBodyId);
+            if (!deals || !deals.deals || deals.deals.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center">No deals found</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = deals.deals.map((deal, index) => `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${deal.id || 'N/A'}</td>
+                    <td>${(deal.contact_first_name || '') + ' ' + (deal.contact_last_name || '') || 'N/A'}</td>
+                    <td>${deal.name || 'N/A'}</td>
+                    <td>${deal.amount || 'N/A'}</td>
+                    <td>${deal.assignedto_name || 'N/A'}</td>
+                    <td>
+                        <span class="badge ${tableBodyId === 'dealsLostTableBody' ? 'at-risk' : 'success'}">
+                            ${tableBodyId === 'dealsLostTableBody' ? deal.deal_stage : deal.deal_stage}
+                        </span>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // ============ CONTACT SIDEBAR ============
+        async function openContactSidebar(contactId) {
+            try {
+                currentContactId = contactId;
+                const [contact, activities, notes, calls, logs] = await Promise.all([
+                    callApi(`contact/${contactId}`),
+                    callApi("followup", {
+                        department: "Sales",
+                        ref_type: "contact",
+                        ref_id: contactId
+                    }),
+                    callApi("note", {
+                        ref_type: "salecontact",
+                        ref_id: contactId
+                    }),
+                    callApi("call", {
+                        contactid: contactId
+                    }),
+                    callApi("log", {
+                        ref_type: "contact",
+                        ref_id: contactId
+                    })
+                ]);
+
+                const firstName = safeGet(contact, 'first_name', '');
+                const lastName = safeGet(contact, 'last_name', '');
+                const fullName = `${firstName} ${lastName}`.trim() || 'No Name';
+
+                document.getElementById('contactFullName').textContent = fullName;
+                document.getElementById('firstName').textContent = firstName;
+                document.getElementById('lastName').textContent = lastName;
+                document.getElementById('jobTitle').textContent = safeGet(contact, 'job_title', '');
+                document.getElementById('mobile').textContent = safeGet(contact, 'mobile_number') || safeGet(contact, 'mobile', '');
+                document.getElementById('email').textContent = safeGet(contact, 'email', '');
+                document.getElementById('city').textContent = safeGet(contact, 'city', '');
+                document.getElementById('state').textContent = safeGet(contact, 'state', '');
+                document.getElementById('country').textContent = safeGet(contact, 'country', '');
+                document.getElementById('owner').textContent = safeGet(contact, 'assigned_to_name') || safeGet(contact, 'owner_id', '');
+                document.getElementById('status').textContent = safeGet(contact, 'contact_status') || safeGet(contact, 'contact_status_id', '');
+                document.getElementById('source').textContent = safeGet(contact, 'source', '');
+                document.getElementById('medium').textContent = safeGet(contact, 'medium', '');
+
+                populateActivityTab(activities);
+                populateNotesTab(notes);
+                populateCallsTab(calls);
+                populateLogsTab(logs);
+                setupFollowupForm();
+
+                document.getElementById('sidebarOverlay').classList.add('show');
+                document.getElementById('contactSidebar').classList.add('show');
+
+            } catch (error) {
+                console.error("Contact sidebar error:", error);
+                softAlert("Error loading contact details. Please try again.", "error");
+            }
+        }
+
+        function populateActivityTab(activities) {
+            const activityContent = document.getElementById('activityContent');
+
+            if (activities && activities.followups && activities.followups.length > 0) {
+                activityContent.innerHTML = activities.followups.map(activity => {
+                    const followupDate = new Date(activity.followuptime);
+                    const formattedFollowupTime = `${followupDate.getHours().toString().padStart(2, '0')}:${followupDate.getMinutes().toString().padStart(2, '0')}-${(followupDate.getMonth() + 1).toString().padStart(2, '0')}-${followupDate.getDate().toString().padStart(2, '0')} ${followupDate.getHours().toString().padStart(2, '0')}:${followupDate.getMinutes().toString().padStart(2, '0')}:${followupDate.getSeconds().toString().padStart(2, '0')}`;
+
+                    const isCompleted = activity.status_text === 'Completed';
+                    const checkmark = isCompleted ? '✔' : '○';
+                    const checkmarkColor = isCompleted ? '#10b981' : '#6b7280';
+
+                    return `
+                        <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+                            <div style="color: ${checkmarkColor}; font-size: 16px; margin-top: 2px;">${checkmark}</div>
+                            <div style="flex: 1;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                    <span style="font-weight: 500; font-size: 13px;">${activity.followup_admin_name || 'Unknown'}</span>
+                                    <span style="color: #6b7280; font-size: 12px;">at ${activity.entrytime || ''}</span>
+                                </div>
+                                <div style="color: #6b7280; font-size: 12px; margin-bottom: 4px;">${formattedFollowupTime}</div>
+                                <div style="font-size: 13px;">${activity.message || ''}</div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                activityContent.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #6b7280; font-size: 13px;">
+                        No activities available
+                    </div>
+                `;
+            }
+        }
+
+        function populateNotesTab(notes) {
+            const notesContent = document.getElementById('notesContent');
+
+            if (notes && notes.notes && notes.notes.length > 0) {
+                notesContent.innerHTML = notes.notes.map(note => `
+                    <div style="padding: 16px; border-bottom: 1px solid #e5e7eb; margin-bottom: 12px;">
+                        <div style="font-size: 13px; margin-bottom: 8px;">${note.content || ''}</div>
+                        <div style="display: flex; justify-content: space-between; font-size: 11px; color: #6b7280;">
+                            <span>${note.created_by || 'Unknown'}</span>
+                            <span>${note.created_at || ''}</span>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                notesContent.innerHTML = `
+                    <p style="color: #6b7280; font-size: 13px;">No notes available</p>
+                `;
+            }
+        }
+
+        function populateCallsTab(calls) {
+            const callsContent = document.getElementById('callsContent');
+
+            if (calls && calls.calls && calls.calls.length > 0) {
+                callsContent.innerHTML = calls.calls.map(call => `
+                    <tr>
+                        <td style="padding: 12px 16px; border-bottom: 1px solid #e5e7eb;">${call.time || ''}</td>
+                        <td style="padding: 12px 16px; border-bottom: 1px solid #e5e7eb;">${call.type || ''}</td>
+                        <td style="padding: 12px 16px; border-bottom: 1px solid #e5e7eb;">${call.caller || ''}</td>
+                        <td style="padding: 12px 16px; border-bottom: 1px solid #e5e7eb;">${call.receiver || ''}</td>
+                        <td style="padding: 12px 16px; border-bottom: 1px solid #e5e7eb;">${call.status || ''}</td>
+                        <td style="padding: 12px 16px; border-bottom: 1px solid #e5e7eb;">${call.duration || ''}</td>
+                    </tr>
+                `).join('');
+            } else {
+                callsContent.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px; color: #6b7280; font-size: 13px;">
+                            No call logs available
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function populateLogsTab(logs) {
+            const logsContent = document.getElementById('logsContent');
+
+            if (logs && logs.logs && logs.logs.length > 0) {
+                logsContent.innerHTML = logs.logs.map(log => `
+                    <tr>
+                        <td style="padding: 12px 16px; border-bottom: 1px solid #e5e7eb;">${log.action || ''}</td>
+                        <td style="padding: 12px 16px; border-bottom: 1px solid #e5e7eb;">${log.actby || ''}</td>
+                        <td style="padding: 12px 16px; border-bottom: 1px solid #e5e7eb;">${log.date || ''}</td>
+                    </tr>
+                `).join('');
+            } else {
+                logsContent.innerHTML = `
+                    <tr>
+                        <td colspan="3" style="text-align: center; padding: 40px; color: #6b7280; font-size: 13px;">
+                            No activity logs available
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function setupFollowupForm() {
+            const now = new Date();
+            const formattedDate = now.toISOString().split('T')[0];
+            document.getElementById('dueAtDate').value = formattedDate;
+            document.getElementById('dueAtType').value = "Call";
+        }
+
+        async function addFollowup() {
+            const message = document.getElementById('followupMessage').value.trim();
+            const dueAtDate = document.getElementById('dueAtDate').value;
+            const dueAtType = document.getElementById('dueAtType').value;
+
+            if (!message) {
+                alert("Please enter a follow-up message");
+                return;
+            }
+
+            if (!currentContactId) {
+                alert("No contact selected");
+                return;
+            }
+
+            try {
+                const data = {
+                    department: "Sales",
+                    ref_type: "contact",
+                    ref_id: currentContactId,
+                    message: message,
+                    followuptime: dueAtDate + " 00:00:00",
+                    type: dueAtType === "Call" ? "4" : "1",
+                    status: "24"
+                };
+
+                const response = await callApi("followup", data, "POST");
+                if (response && response.rcode === "success") {
+                    document.getElementById('followupMessage').value = "";
+                    const activities = await callApi("followup", {
+                        department: "Sales",
+                        ref_type: "contact",
+                        ref_id: currentContactId
+                    });
+                    populateActivityTab(activities);
+                    alert("Follow-up added successfully!");
+                } else {
+                    alert("Error adding follow-up: " + (response.rmessage || "Unknown error"));
+                }
+            } catch (error) {
+                console.error("Error adding follow-up:", error);
+                alert("Error adding follow-up. Please try again.");
+            }
+        }
+
+        function closeNote() {
+            switchTab('activity');
+        }
+
+        function closeCalls() {
+            switchTab('activity');
+        }
+
+        function closeContactSidebar() {
+            document.getElementById('sidebarOverlay').classList.remove('show');
+            document.getElementById('contactSidebar').classList.remove('show');
+            currentContactId = null;
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.sidebar-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            const clickedTab = event.target.closest('.sidebar-tab');
+            if (clickedTab) {
+                clickedTab.classList.add('active');
+            }
+            document.getElementById(tabName + '-tab').classList.add('active');
+        }
+
+        // ============ ACTIVITY FUNCTIONS ============
+        function renderActivity(activities) {
+            const timeline = document.getElementById('activityTimeline');
+
+            if (!activities || activities.length === 0) {
+                timeline.innerHTML = `
+                    <div class="activity-item">
+                        <div class="activity-content">
+                            <p>No recent activity found</p>
+                            <small>Activity will appear here as it happens</small>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            const activityItems = [];
+            activities.forEach((activity) => {
+                if (!activity) return;
+                const taskText = safeGet(activity, 'task') ||
+                    safeGet(activity, 'action') ||
+                    safeGet(activity, 'description') ||
+                    'Activity logged';
+
+                const user = extractUserName(taskText) || 'Admin';
+                const ip = safeGet(activity, 'ip') || safeGet(activity, 'ip_address', '');
+                const time = safeGet(activity, 'time') ||
+                    safeGet(activity, 'created_at') ||
+                    safeGet(activity, 'date', '');
+
+                let timeDisplay = 'Recently';
+                if (time) {
+                    try {
+                        const activityTime = new Date(time);
+                        if (!isNaN(activityTime.getTime())) {
+                            const now = new Date();
+                            const diffMs = now - activityTime;
+                            const diffMins = Math.floor(diffMs / (1000 * 60));
+                            const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+                            const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+                            if (diffMins < 60) {
+                                timeDisplay = `${diffMins}m ago`;
+                            } else if (diffHours < 24) {
+                                timeDisplay = `${diffHours}h ago`;
+                            } else if (diffDays === 1) {
+                                timeDisplay = 'Yesterday';
+                            } else if (diffDays < 7) {
+                                timeDisplay = `${diffDays}d ago`;
+                            } else {
+                                timeDisplay = activityTime.toLocaleDateString('en-US', {
+                                    month: 'short',
+                                    day: 'numeric'
+                                });
+                            }
+                        }
+                    } catch (e) {
+                        console.error('Error parsing time:', e);
+                    }
+                }
+
+                activityItems.push({
+                    type: taskText.includes('Logout') ? 'logout' : 'login',
+                    user: user,
+                    description: taskText,
+                    details: ip ? `IP: ${ip}` : '',
+                    time: timeDisplay
+                });
+            });
+
+            if (activityItems.length === 0) {
+                timeline.innerHTML = `
+                    <div class="activity-item">
+                        <div class="activity-content">
+                            <p>No activity items to display</p>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            timeline.innerHTML = activityItems.map(activity => {
+                const iconData = {
+                    call: { icon: 'bi-telephone-fill', bg: '#DBEAFE', color: '#1E40AF' },
+                    email: { icon: 'bi-envelope-fill', bg: '#FEF3C7', color: '#92400E' },
+                    meeting: { icon: 'bi-calendar-event-fill', bg: '#D1FAE5', color: '#065F46' },
+                    deal: { icon: 'bi-trophy-fill', bg: '#FEE2E2', color: '#991B1B' },
+                    login: { icon: 'bi-box-arrow-in-right', bg: '#D1FAE5', color: '#065F46' },
+                    logout: { icon: 'bi-box-arrow-right', bg: '#FEE2E2', color: '#991B1B' }
+                }[activity.type] || { icon: 'bi-info-circle', bg: '#E5E7EB', color: '#6B7280' };
+
+                return `
+                    <div class="activity-item">
+                        <div class="activity-icon" style="background: ${iconData.bg}; color: ${iconData.color};">
+                            <i class="bi ${iconData.icon}"></i>
+                        </div>
+                        <div class="activity-content">
+                            <p><strong>${activity.user || 'Unknown'}</strong> ${activity.description || ''}</p>
+                            ${activity.details ? `<small>${activity.details}</small>` : ''}
+                        </div>
+                        <div class="activity-time">${activity.time}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function extractUserName(taskText) {
+            if (!taskText) return 'Admin';
+            const userMatch = taskText.match(/Admin User (\w+)/);
+            return userMatch && userMatch[1] ? userMatch[1] : 'Admin';
+        }
+
+        // ============ TASK FILTER FUNCTIONS ============
+        async function applyTasksFilter() {
+            currentTaskFilters = {
+                department: document.getElementById('filterDepartment').value,
+                status: document.getElementById('filterStatus').value,
+                ref_type: document.getElementById('filterRefType').value,
+                ref_id: document.getElementById('filterRefId').value
+            };
+
+            await loadFilteredTasks();
+        }
+
+        function clearTasksFilter() {
+            document.getElementById('filterDepartment').value = '';
+            document.getElementById('filterStatus').value = '';
+            document.getElementById('filterRefType').value = '';
+            document.getElementById('filterRefId').value = '';
+
+            currentTaskFilters = {
+                department: '',
+                status: '',
+                ref_type: '',
+                ref_id: ''
+            };
+            currentCategory = '';
+
+            loadTasksWithMainFilters();
+        }
 
         async function loadFilteredTasks() {
             try {
-                // Build API parameters
                 let params = {
                     mytickets: 0,
-                    status: 24 // Default status (Pending)
+                    status: 24
                 };
 
-                // Add main filters (sales_person becomes followup_admin)
                 if (mainFilters.sales_person) {
                     params.followup_admin = mainFilters.sales_person;
                 }
 
-                // Add main date filters (date_from becomes date_start, date_to becomes date_end)
                 if (mainFilters.date_from) {
                     params.date_start = mainFilters.date_from;
                 }
@@ -4437,12 +5283,10 @@ $staffList = $person['available_staff'] ?? [];
                     params.date_end = mainFilters.date_to;
                 }
 
-                // Add category-based date filters if set (this will override main date filters for the category)
                 if (currentCategory) {
                     await applyCategoryDateFilter(params, currentCategory);
                 }
 
-                // Add task filters if set
                 if (currentTaskFilters.department) {
                     params.department = currentTaskFilters.department;
                 }
@@ -4456,14 +5300,9 @@ $staffList = $person['available_staff'] ?? [];
                     params.ref_id = currentTaskFilters.ref_id;
                 }
 
-                console.log('Task API Parameters:', params); // Debug log
-
-                // Make API call
                 const data = await callApi("followup", params);
-
-                // Update tasks
                 filteredTasks = data?.followups || [];
-                allTasks = filteredTasks; // Update allTasks with filtered results
+                allTasks = filteredTasks;
                 currentPage = 1;
                 renderTasks(currentPage);
 
@@ -4472,13 +5311,9 @@ $staffList = $person['available_staff'] ?? [];
             }
         }
 
-
-        // Update filterTasksByCategory function
         async function filterTasksByCategory(category) {
             currentCategory = category;
             currentPage = 1;
-
-            // Get main filters
             mainFilters = getMainFilters();
 
             let params = {
@@ -4486,15 +5321,12 @@ $staffList = $person['available_staff'] ?? [];
                 status: 24
             };
 
-            // Add main filters
             if (mainFilters.sales_person) {
                 params.followup_admin = mainFilters.sales_person;
             }
 
-            // Apply category date filter (this overrides main date filters)
             await applyCategoryDateFilter(params, category);
 
-            // Add main date filters only if not overridden by category
             if (!params.date_start && mainFilters.date_from) {
                 params.date_start = mainFilters.date_from;
             }
@@ -4502,7 +5334,6 @@ $staffList = $person['available_staff'] ?? [];
                 params.date_end = mainFilters.date_to;
             }
 
-            // Apply any existing task filters
             if (currentTaskFilters.department) {
                 params.department = currentTaskFilters.department;
             }
@@ -4517,10 +5348,9 @@ $staffList = $person['available_staff'] ?? [];
             }
 
             try {
-                console.log('Category API Parameters:', params); // Debug log
                 const data = await callApi("followup", params);
                 filteredTasks = data?.followups || [];
-                allTasks = filteredTasks; // Update allTasks with filtered results
+                allTasks = filteredTasks;
                 renderTasks(currentPage);
             } catch (error) {
                 console.error("Filter API error:", error);
@@ -4557,1503 +5387,14 @@ $staffList = $person['available_staff'] ?? [];
             }
         }
 
-
-
-        function renderTasks(page, pageData = undefined) {
-            let pageTasks = [];
-            const start = (page - 1) * itemsPerPage;
-            const end = start + itemsPerPage;
-
-            if (pageData) pageTasks = pageData;
-            else pageTasks = filteredTasks.slice(start, end);
-            // console.log(pageTasks);
-
-            const tbody = document.getElementById('tasksTableBody');
-
-            tbody.innerHTML = pageTasks.map((task, index) => `
-                <tr onclick="openContactSidebar('${task.ref_id}')">
-                    <td>${start + index + 1}</td>
-                    <td>${task.id}</td>
-                    <td><span class="badge ${task.type_text === 'Call' ? 'status-new' : task.type_text === 'Email' ? 'status-qualified' : 'status-contacted'}">${task.type_text}</span></td>
-                    <td><span class="badge ${task.status_text === 'Completed' ? 'completed' : task.status_text === 'Overdue' ? 'overdue' : 'pending'}">${task.status_text}</span></td>
-                    <td>${task.followuptime}</td>
-                    <td>${task.clientname}</td>
-                    <td>${task.message}</td>
-                    <td>${task.followup_admin_name}</td>
-                    <td>${task.department}</td>
-                    <td>${task.ref_type}</td>
-                    <td>${task.entrytime}</td>
-                    <td>${task.completedtime}</td>
-                </tr>
-            `).join('');
-
-            renderPagination();
-        }
-
-        function renderPagination() {
-            const pagination = document.getElementById('tasksPagination');
-            const totalPages = Math.ceil(filteredTasks.length / itemsPerPage);
-
-            let paginationHTML = `
-                <button class="pagination-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
-                    <i class="bi bi-chevron-left"></i>
-                </button>
-            `;
-
-            // Show page 1
-            paginationHTML += `<button class="pagination-btn ${currentPage === 1 ? 'active' : ''}" onclick="changePage(1)">1</button>`;
-
-            // Show page 2 if exists
-            if (totalPages >= 2) {
-                paginationHTML += `<button class="pagination-btn ${currentPage === 2 ? 'active' : ''}" onclick="changePage(2)">2</button>`;
-            }
-
-            // Show page 3 if exists
-            if (totalPages >= 3 && currentPage <= 3) {
-                paginationHTML += `<button class="pagination-btn ${currentPage === 3 ? 'active' : ''}" onclick="changePage(3)">3</button>`;
-            }
-
-            // Show input if more than 3 pages
-            if (totalPages > 3) {
-                paginationHTML += `<input type="number" class="pagination-input" value="${currentPage}" min="1" max="${totalPages}" onchange="changePage(parseInt(this.value))">`;
-            }
-
-            // Show last pages
-            if (totalPages > 3 && currentPage < totalPages - 2) {
-                paginationHTML += `<button class="pagination-btn" onclick="changePage(${totalPages - 1})">${totalPages - 1}</button>`;
-                paginationHTML += `<button class="pagination-btn" onclick="changePage(${totalPages})">${totalPages}</button>`;
-            } else if (totalPages > 3) {
-                for (let i = Math.max(4, currentPage); i <= totalPages; i++) {
-                    paginationHTML += `<button class="pagination-btn ${currentPage === i ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
-                }
-            }
-
-            paginationHTML += `
-                <button class="pagination-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
-                    <i class="bi bi-chevron-right"></i>
-                </button>
-            `;
-
-            pagination.innerHTML = paginationHTML;
-        }
-
-        function changePage(page) {
-            const totalPages = Math.ceil(filteredTasks.length / itemsPerPage);
-            if (page >= 1 && page <= totalPages) {
-                currentPage = page;
-                renderTasks(currentPage);
-            }
-        }
-
-        function viewDetails(id) {
-            console.log('View details for task:', id);
-        }
-
-        //api for source and status => contact
-
-        async function getSourceStatusData(data) {
-            try {
-
-                const contacts = data.contacts;
-
-                // ✅ COUNT SOURCE
-                const sourceCount = contacts.reduce((acc, contact) => {
-                    const source = contact.source || "Unknown";
-                    acc[source] = (acc[source] || 0) + 1;
-                    return acc;
-                }, {});
-
-                // ✅ COUNT STATUS
-                // const statusCount = contacts.reduce((acc, contact) => {
-                //     const status = contact.status || "Unknown";
-                //     acc[status] = (acc[status] || 0) + 1;
-                //     return acc;
-                // }, {});
-                // console.log(statusCount);
-                renderCharts(sourceCount);
-                // renderStatsRow2(statusCount);
-                // return { sourceCount, statusCount };
-
-            } catch (error) {
-                console.error("Error fetching source/status data:", error);
-                return null;
-            }
-
-        }
-
-
-        let quarterTargetChartInstance = null;
-
-        function salesTargetOverviewGraph(data) {
-            const ctx = document.getElementById('quarterTargetChart').getContext('2d');
-
-            // Destroy old chart if exists (important)
-            if (quarterTargetChartInstance) {
-                quarterTargetChartInstance.destroy();
-            }
-
-            quarterTargetChartInstance = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Achieved', 'Remaining'],
-                    datasets: [{
-                        data: [data.achieved, data.remaining],
-                        backgroundColor: ['#10B981', '#E5E7EB'],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    cutout: '75%',
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: { enabled: false }
-                    }
-                }
-            });
-
-        }
-
-
-        // Lead Source Chart
-        function renderCharts(sourceCount) {
-            const canvas = document.getElementById('leadSourceChart');
-            if (!canvas) return;
-
-            const ctx = canvas.getContext('2d');
-
-            // ✅ DESTROY OLD CHART IF EXISTS
-            if (leadSourceChartInstance) {
-                leadSourceChartInstance.destroy();
-                leadSourceChartInstance = null;
-            }
-
-            // ✅ CREATE NEW CHART
-            leadSourceChartInstance = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: Object.keys(sourceCount),
-                    datasets: [{
-                        data: Object.values(sourceCount)
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false
-                }
-            });
-        }
-
-
-        function renderActivity(activities) {
-            const timeline = document.getElementById('activityTimeline');
-
-            // console.log('Activity data received:', activities); // Debug log
-
-            // Handle different possible structures
-            if (!activities) {
-                timeline.innerHTML = '<div class="activity-item"><div class="activity-content"><p>No activity data available</p></div></div>';
-                return;
-            }
-
-            // Check if activities is an array
-            if (!Array.isArray(activities)) {
-                // Try to extract array from the object
-                if (activities.activities && Array.isArray(activities.activities)) {
-                    activities = activities.activities;
-                } else if (activities.logs && Array.isArray(activities.logs)) {
-                    activities = activities.logs;
-                } else if (activities.data && Array.isArray(activities.data)) {
-                    activities = activities.data;
-                } else {
-                    // Convert object to array if it has numeric keys
-                    if (typeof activities === 'object' && activities !== null) {
-                        const keys = Object.keys(activities);
-                        if (keys.length > 0 && !isNaN(keys[0])) {
-                            activities = Object.values(activities);
-                        } else {
-                            timeline.innerHTML = '<div class="activity-item"><div class="activity-content"><p>Invalid activity data format</p></div></div>';
-                            return;
-                        }
-                    }
-                }
-            }
-
-            // If still not an array or empty
-            if (!Array.isArray(activities) || activities.length === 0) {
-                timeline.innerHTML = '<div class="activity-item"><div class="activity-content"><p>No recent activity found</p></div></div>';
-                return;
-            }
-
-            const iconMap = {
-                call: { icon: 'bi-telephone-fill', bg: '#DBEAFE', color: '#1E40AF' },
-                email: { icon: 'bi-envelope-fill', bg: '#FEF3C7', color: '#92400E' },
-                meeting: { icon: 'bi-calendar-event-fill', bg: '#D1FAE5', color: '#065F46' },
-                deal: { icon: 'bi-trophy-fill', bg: '#FEE2E2', color: '#991B1B' },
-                login: { icon: 'bi-box-arrow-in-right', bg: '#D1FAE5', color: '#065F46' },
-                logout: { icon: 'bi-box-arrow-right', bg: '#FEE2E2', color: '#991B1B' }
-            };
-
-            // Process each activity
-            const activityItems = [];
-
-            activities.forEach((activity, index) => {
-                if (!activity || typeof activity !== 'object') return;
-
-                // Determine activity type
-                let type = 'login';
-                let taskText = '';
-                let user = 'Admin';
-                let ip = '';
-                let time = '';
-
-                // Handle different field names
-                if (activity.task) {
-                    taskText = String(activity.task);
-                    if (taskText.includes('Logout')) {
-                        type = 'logout';
-                    }
-
-                    // Extract user name
-                    const userMatch = taskText.match(/Admin User (\w+)/);
-                    if (userMatch && userMatch[1]) {
-                        user = userMatch[1];
-                    }
-                } else if (activity.action) {
-                    taskText = String(activity.action);
-                } else if (activity.description) {
-                    taskText = String(activity.description);
-                }
-
-                // Get IP
-                if (activity.ip) {
-                    ip = activity.ip;
-                } else if (activity.ip_address) {
-                    ip = activity.ip_address;
-                }
-
-                // Get time
-                if (activity.time) {
-                    time = activity.time;
-                } else if (activity.created_at) {
-                    time = activity.created_at;
-                } else if (activity.date) {
-                    time = activity.date;
-                }
-
-                // Format time display
-                let timeDisplay = 'Recently';
-                if (time) {
-                    try {
-                        const activityTime = new Date(time);
-                        if (!isNaN(activityTime.getTime())) {
-                            const now = new Date();
-                            const diffMs = now - activityTime;
-                            const diffMins = Math.floor(diffMs / (1000 * 60));
-                            const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-                            const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-                            if (diffMins < 60) {
-                                timeDisplay = `${diffMins}m ago`;
-                            } else if (diffHours < 24) {
-                                timeDisplay = `${diffHours}h ago`;
-                            } else if (diffDays === 1) {
-                                timeDisplay = 'Yesterday';
-                            } else if (diffDays < 7) {
-                                timeDisplay = `${diffDays}d ago`;
-                            } else {
-                                timeDisplay = activityTime.toLocaleDateString('en-US', {
-                                    month: 'short',
-                                    day: 'numeric'
-                                });
-                            }
-                        }
-                    } catch (e) {
-                        console.error('Error parsing time:', e);
-                    }
-                }
-
-                activityItems.push({
-                    type: type,
-                    user: user,
-                    description: taskText,
-                    details: ip ? `IP: ${ip}` : '',
-                    time: timeDisplay,
-                    originalTime: time
-                });
-            });
-
-            // Sort by time (newest first)
-            activityItems.sort((a, b) => {
-                try {
-                    const timeA = a.originalTime ? new Date(a.originalTime).getTime() : 0;
-                    const timeB = b.originalTime ? new Date(b.originalTime).getTime() : 0;
-                    return timeB - timeA; // Descending (newest first)
-                } catch (e) {
-                    return 0;
-                }
-            });
-
-            // Take only the latest activities
-            const recentActivities = activityItems.slice(0, 10);
-
-            // Generate HTML
-            if (recentActivities.length === 0) {
-                timeline.innerHTML = '<div class="activity-item"><div class="activity-content"><p>No activity items to display</p></div></div>';
-                return;
-            }
-
-            timeline.innerHTML = recentActivities.map(activity => {
-                const iconData = iconMap[activity.type] || iconMap.login;
-                return `
-            <div class="activity-item">
-                <div class="activity-icon" style="background: ${iconData.bg}; color: ${iconData.color};">
-                    <i class="bi ${iconData.icon}"></i>
-                </div>
-                <div class="activity-content">
-                    <p><strong>${activity.user}</strong> ${activity.description}</p>
-                    ${activity.details ? `<small>${activity.details}</small>` : ''}
-                </div>
-                <div class="activity-time">${activity.time}</div>
-            </div>
-        `;
-            }).join('');
-        }
-
-        function totalFunnelValue(kpie) {
-            // console.log(kpie);
-
-            const totalFunnelValue = document.getElementById('totalFunnelValue');
-
-            const largeStats = [
-                {
-                    title: 'Total No. of Prospects Added In Deals',
-                    value: kpie.total_deals,
-                    icon: 'bi-plus-circle',
-                    color: 'blue',
-                    clickable: false
-                },
-                {
-                    title: 'Total Funnel Expected Value',
-                    value: kpie.total_deal_amount,
-                    icon: 'bi-currency-rupee',
-                    color: 'yellow',
-                    clickable: false
-                },
-                {
-                    title: 'Deals Lost',
-                    value: kpie.total_deal_won,
-                    icon: 'bi-x-circle',
-                    color: 'red',
-                    clickable: true,
-                    onClick: "applyDealsFilter('lost')"
-                },
-                {
-                    title: 'Deals Won',
-                    value: kpie.total_deal_lost,
-                    icon: 'bi-trophy',
-                    color: 'green',
-                    clickable: true,
-                    onClick: "applyDealsFilter('won')"
-                }
-            ];
-
-            totalFunnelValue.innerHTML = largeStats.map(stat => `
-                <div class="stat-card stat-card-large ${stat.clickable ? 'clickable' : ''}"
-                    ${stat.clickable ? `onclick="${stat.onClick}"` : ''}>
-                    
-                    <div class="stat-info">
-                        <h6>${stat.title}</h6>
-                        <h3 class="large">${stat.value}</h3>
-
-                        ${stat.title === 'Deals Lost' && selectedDealsLostReason ? `<span class="selected-filter">Filter: ${selectedDealsLostReason}</span>` : ''}
-
-                        ${stat.title === 'Deals Won' && selectedDealsWonType ? `<span class="selected-filter">Type: ${selectedDealsWonType}</span>` : ''}
-                    </div>
-
-                    <div class="stat-icon large ${stat.color}">
-                        <i class="${stat.icon}"></i>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-
-
-        function headerCards(kpie) {
-            // console.log(kpie);
-            const headerCards = document.getElementById('header_card');
-            const largeStats = [
-                { title: 'Overdue Followups', value: kpie.overdue, icon: 'bi-exclamation-triangle', color: 'red', category: 'overdue' },
-                { title: 'Today Due Followups', value: kpie.today, icon: 'bi-calendar-check', color: 'blue', category: 'today' },
-                { title: 'This Week Due Followup', value: kpie.week, icon: 'bi-calendar-week', color: 'green', category: 'week' },
-                { title: 'Next 30 Days Due', value: kpie.month, icon: 'bi-calendar-range', color: 'yellow', category: 'next30' }
-            ];
-
-            headerCards.innerHTML = largeStats.map(stat => `
-                <div class="stat-card stat-card-large" style="flex-direction:column; align-items:flex-start;">
-                    <!-- Top section (title & icon row) -->
-                    <div style="width:100%; display:flex; justify-content:space-between; align-items:center;">
-                        <div class="stat-info">
-                            <h6>${stat.title}</h6>
-                            <h3 class="large">${stat.value}</h3>
-                        </div>
-                        <div class="stat-icon large ${stat.color}">
-                            <i class="bi ${stat.icon}"></i>
-                        </div>
-                    </div>
-                    <!-- HR inside card -->
-                    <hr style="width:100%; margin:10px 0;">
-                    <!-- View List inside card -->
-                    <a href="javascript:void(0)" onclick="filterTasksByCategory('${stat.category}')"
-                       class="text-primary"
-                       style="font-size:13px; text-decoration:underline; cursor:pointer;">
-                       <i class="bi bi-list-ul"></i> View List
-                    </a>
-                </div>
-            `).join('');
-        }
-
-        // Deals Lost Modal Functions
-        // function populateDealsLostDropdown() {
-        //     const select = document.getElementById('dealsLostReason');
-        //     select.innerHTML = '<option value="">All Reasons</option>';
-        //     dealsLostReasons.forEach(reason => {
-        //         select.innerHTML += `<option value="${reason}">${reason}</option>`;
-        //     });
-        // }
-
-        // function openDealsLostModal() {
-        //     document.getElementById('dealsLostModal').classList.add('show');
-        //     document.getElementById('dealsLostReason').value = selectedDealsLostReason;
-        // }
-
-        // function closeDealsLostModal() {
-        //     document.getElementById('dealsLostModal').classList.remove('show');
-        // }
-
-        // Function to toggle between tables
-        function toggleDealsTable(dealType) {
-            const lostTable = document.getElementById('dealsLostTable');
-            const wonTable = document.getElementById('dealsWonTable');
-
-            if (dealType === 'lost') {
-                lostTable.style.display = 'block';
-                wonTable.style.display = 'none';
-            } else {
-                lostTable.style.display = 'none';
-                wonTable.style.display = 'block';
-            }
-        }
-
-
-        async function applyDealsFilter(dealType) {
-            const dealStageId = dealType === 'lost' ? 155 : 154;
-
-            // Use current filters (date range and sales person)
-            const { sales_person, date_from, date_to } = currentFilters;
-
-            try {
-                // Fetch deals with specific deal_stage_id
-                const dealData = await callApi('deal', {
-                    userid: sales_person,
-                    create_start: date_from,
-                    create_end: date_to,
-                    deal_stage_id: dealStageId
-                });
-
-                if (dealType === 'lost') {
-                    // Populate lost deals table
-                    populateDealsTable(dealData, 'dealsLostTableBody');
-                    toggleDealsTable('lost');
-                } else {
-                    // Populate won deals table
-                    populateDealsTable(dealData, 'dealsWonTableBody');
-                    toggleDealsTable('won');
-                }
-            } catch (error) {
-                console.error('Error fetching deals:', error);
-                const tableBodyId = dealType === 'lost' ? 'dealsLostTableBody' : 'dealsWonTableBody';
-                document.getElementById(tableBodyId).innerHTML =
-                    `<tr><td colspan="7" class="text-center">Error loading deals</td></tr>`;
-            }
-        }
-
-        function populateDealsTable(deals, tableBodyId) {
-            const tbody = document.getElementById(tableBodyId);
-
-            // Check if deals exists and has a deals array
-            if (!deals || !deals.deals || deals.deals.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="text-center">No deals found</td></tr>`;
-                return;
-            }
-
-            // console.log(tableBodyId);
-
-            tbody.innerHTML = deals.deals.map((deal, index) => `
-        <tr>
-            <td>${index + 1}</td>
-            <td>${deal.id || 'N/A'}</td>
-            <td>${(deal.contact_first_name || '') + ' ' + (deal.contact_last_name || '') || 'N/A'}</td>
-            <td>${deal.name || 'N/A'}</td>
-            <td>${deal.amount || 'N/A'}</td>
-            <td>${deal.assignedto_name || 'N/A'}</td>
-            
-            <td>
-                <span class="badge ${tableBodyId === 'dealsLostTableBody' ? 'at-risk' : 'success'}">
-                    ${tableBodyId === 'dealsLostTableBody' ? deal.deal_stage : deal.deal_stage}
-                </span>
-            </td>
-        </tr>
-    `).join('');
-        }
-
-
-
-
-        // Contact Sidebar Functions
-        async function openContactSidebar(contactId) {
-            try {
-                currentContactId = contactId;
-
-                const [contact, activities, notes, calls, logs] = await Promise.all([
-                    callApi(`contact/${contactId}`),
-                    callApi("followup", {
-                        department: "Sales",
-                        ref_type: "contact",
-                        ref_id: contactId
-                    }),
-                    callApi("note", {
-                        ref_type: "salecontact",
-                        ref_id: contactId
-                    }),
-                    callApi("call", {
-                        contactid: contactId
-                    }),
-                    callApi("log", {
-                        ref_type: "contact",
-                        ref_id: contactId
-                    })
-                ]);
-
-                console.log("Contact Data:", contact);
-                console.log("Activities Data:", activities);
-                console.log("Notes Data:", notes);
-                console.log("Calls Data:", calls);
-                console.log("Logs Data:", logs);
-
-                // Populate contact info
-                document.getElementById('contactFullName').textContent = `${contact.first_name || ''} ${contact.last_name || ''}`.trim();
-                document.getElementById('firstName').textContent = contact.first_name || '';
-                document.getElementById('lastName').textContent = contact.last_name || '';
-                document.getElementById('jobTitle').textContent = contact.job_title || '';
-                document.getElementById('mobile').textContent = contact.mobile_number || contact.mobile || '';
-                document.getElementById('email').textContent = contact.email || '';
-                document.getElementById('city').textContent = contact.city || '';
-                document.getElementById('state').textContent = contact.state || '';
-                document.getElementById('country').textContent = contact.country || '';
-                document.getElementById('owner').textContent = contact.assigned_to_name || contact.owner_id || '';
-                document.getElementById('status').textContent = contact.contact_status || contact.contact_status_id || '';
-                document.getElementById('source').textContent = contact.source || '';
-                document.getElementById('medium').textContent = contact.medium || '0';
-
-                // Populate activity timeline
-                populateActivityTab(activities);
-
-                // Populate notes
-                populateNotesTab(notes);
-
-                // Populate calls
-                populateCallsTab(calls);
-
-                // Populate logs
-                populateLogsTab(logs);
-
-                // Set up form for adding followup
-                setupFollowupForm();
-
-                document.getElementById('sidebarOverlay').classList.add('show');
-                document.getElementById('contactSidebar').classList.add('show');
-
-            } catch (error) {
-                console.error("Contact sidebar error:", error);
-                alert("Error loading contact details. Please try again.");
-            }
-        }
-
-        function populateActivityTab(activities) {
-            const activityContent = document.getElementById('activityContent');
-
-            if (activities && activities.followups && activities.followups.length > 0) {
-                activityContent.innerHTML = activities.followups.map(activity => {
-                    // Format the second line date (followuptime)
-                    const followupDate = new Date(activity.followuptime);
-                    const formattedFollowupTime = `${followupDate.getHours().toString().padStart(2, '0')}:${followupDate.getMinutes().toString().padStart(2, '0')}-${(followupDate.getMonth() + 1).toString().padStart(2, '0')}-${followupDate.getDate().toString().padStart(2, '0')} ${followupDate.getHours().toString().padStart(2, '0')}:${followupDate.getMinutes().toString().padStart(2, '0')}:${followupDate.getSeconds().toString().padStart(2, '0')}`;
-
-                    // Check if completed or pending
-                    const isCompleted = activity.status_text === 'Completed';
-                    const checkmark = isCompleted ? '✔' : '○';
-                    const checkmarkColor = isCompleted ? '#10b981' : '#6b7280';
-
-                    return `
-                <div style="display: flex; gap: 12px; margin-bottom: 16px;">
-                    <div style="color: ${checkmarkColor}; font-size: 16px; margin-top: 2px;">${checkmark}</div>
-                    <div style="flex: 1;">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-                            <span style="font-weight: 500; font-size: 13px;">${activity.followup_admin_name || 'Unknown'}</span>
-                            <span style="color: #6b7280; font-size: 12px;">at ${activity.entrytime || ''}</span>
-                        </div>
-                        <div style="color: #6b7280; font-size: 12px; margin-bottom: 4px;">${formattedFollowupTime}</div>
-                        <div style="font-size: 13px;">${activity.message || ''}</div>
-                    </div>
-                </div>
-            `;
-                }).join('');
-            } else {
-                activityContent.innerHTML = `
-            <div style="text-align: center; padding: 40px; color: #6b7280; font-size: 13px;">
-                No activities available
-            </div>
-        `;
-            }
-        }
-
-        function populateNotesTab(notes) {
-            const notesContent = document.getElementById('notesContent');
-
-            if (notes && notes.notes && notes.notes.length > 0) {
-                notesContent.innerHTML = notes.notes.map(note => `
-                    <div style="padding: 16px; border-bottom: 1px solid #e5e7eb; margin-bottom: 12px;">
-                        <div style="font-size: 13px; margin-bottom: 8px;">${note.content || ''}</div>
-                        <div style="display: flex; justify-content: space-between; font-size: 11px; color: #6b7280;">
-                            <span>${note.created_by || 'Unknown'}</span>
-                            <span>${note.created_at || ''}</span>
-                        </div>
-                    </div>
-                `).join('');
-            } else {
-                notesContent.innerHTML = `
-            <p style="color: #6b7280; font-size: 13px;">No notes available</p>
-        `;
-            }
-        }
-
-        function populateCallsTab(calls) {
-            const callsContent = document.getElementById('callsContent');
-
-            if (calls && calls.calls && calls.calls.length > 0) {
-                callsContent.innerHTML = calls.calls.map(call => `
-            <tr>
-                <td style="padding: 12px 16px; border-bottom: 1px solid #e5e7eb;">${call.time || ''}</td>
-                <td style="padding: 12px 16px; border-bottom: 1px solid #e5e7eb;">${call.type || ''}</td>
-                <td style="padding: 12px 16px; border-bottom: 1px solid #e5e7eb;">${call.caller || ''}</td>
-                <td style="padding: 12px 16px; border-bottom: 1px solid #e5e7eb;">${call.receiver || ''}</td>
-                <td style="padding: 12px 16px; border-bottom: 1px solid #e5e7eb;">${call.status || ''}</td>
-                <td style="padding: 12px 16px; border-bottom: 1px solid #e5e7eb;">${call.duration || ''}</td>
-            </tr>
-        `).join('');
-            } else {
-                callsContent.innerHTML = `
-            <tr>
-                <td colspan="6" style="text-align: center; padding: 40px; color: #6b7280; font-size: 13px;">
-                    No call logs available
-                </td>
-            </tr>
-        `;
-            }
-        }
-
-        function populateLogsTab(logs) {
-            const logsContent = document.getElementById('logsContent');
-
-            if (logs && logs.logs && logs.logs.length > 0) {
-                logsContent.innerHTML = logs.logs.map(log => `
-            <tr>
-                <td style="padding: 12px 16px; border-bottom: 1px solid #e5e7eb;">${log.action || ''}</td>
-                <td style="padding: 12px 16px; border-bottom: 1px solid #e5e7eb;">${log.actby || ''}</td>
-                <td style="padding: 12px 16px; border-bottom: 1px solid #e5e7eb;">${log.date || ''}</td>
-            </tr>
-        `).join('');
-            } else {
-                logsContent.innerHTML = `
-            <tr>
-                <td colspan="3" style="text-align: center; padding: 40px; color: #6b7280; font-size: 13px;">
-                    No activity logs available
-                </td>
-            </tr>
-        `;
-            }
-        }
-
-        function setupFollowupForm() {
-            // Set current date as default for due at
-            const now = new Date();
-            const formattedDate = now.toISOString().split('T')[0];
-            document.getElementById('dueAtDate').value = formattedDate;
-
-            // Set default type to "Call"
-            document.getElementById('dueAtType').value = "Call";
-        }
-
-        async function addFollowup() {
-            const message = document.getElementById('followupMessage').value.trim();
-            const dueAtDate = document.getElementById('dueAtDate').value;
-            const dueAtType = document.getElementById('dueAtType').value;
-
-            if (!message) {
-                alert("Please enter a follow-up message");
-                return;
-            }
-
-            if (!currentContactId) {
-                alert("No contact selected");
-                return;
-            }
-
-            try {
-                const data = {
-                    department: "Sales",
-                    ref_type: "contact",
-                    ref_id: currentContactId,
-                    message: message,
-                    followuptime: dueAtDate + " 00:00:00",
-                    type: dueAtType === "Call" ? "4" : "1",
-                    status: "24"
-                };
-
-                // Make API call to add followup
-                const response = await callApi("followup", data, "POST");
-
-                if (response && response.rcode === "success") {
-                    // Clear the form
-                    document.getElementById('followupMessage').value = "";
-
-                    // Refresh the activities
-                    const activities = await callApi("followup", {
-                        department: "Sales",
-                        ref_type: "contact",
-                        ref_id: currentContactId
-                    });
-
-                    populateActivityTab(activities);
-
-                    alert("Follow-up added successfully!");
-                } else {
-                    alert("Error adding follow-up: " + (response.rmessage || "Unknown error"));
-                }
-            } catch (error) {
-                console.error("Error adding follow-up:", error);
-                alert("Error adding follow-up. Please try again.");
-            }
-        }
-
-        function closeNote() {
-            // Switch back to activity tab
-            switchTab('activity');
-        }
-
-        function closeCalls() {
-            // Switch back to activity tab
-            switchTab('activity');
-        }
-
-        function closeContactSidebar() {
-            document.getElementById('sidebarOverlay').classList.remove('show');
-            document.getElementById('contactSidebar').classList.remove('show');
-            currentContactId = null;
-        }
-
-        function switchTab(tabName) {
-            // Remove active class from all tabs
-            document.querySelectorAll('.sidebar-tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
-            });
-
-            // Add active class to selected tab
-            const clickedTab = event.target.closest('.sidebar-tab');
-            if (clickedTab) {
-                clickedTab.classList.add('active');
-            }
-            document.getElementById(tabName + '-tab').classList.add('active');
-        }
-
-        function closeContactSidebar() {
-            document.getElementById('sidebarOverlay').classList.remove('show');
-            document.getElementById('contactSidebar').classList.remove('show');
-        }
-
-        function switchTab(tabName) {
-            // Remove active class from all tabs
-            document.querySelectorAll('.sidebar-tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
-            });
-
-            // Add active class to selected tab
-            event.target.classList.add('active');
-            document.getElementById(tabName + '-tab').classList.add('active');
-        }
-
-
-
-
-        //////////////////////Manage Sales Targets table
-
-
-        function formatINR(value) {
-            if (!value || isNaN(value)) return '₹ 0';
-
-            if (value >= 100000) {
-                return `₹ ${(value / 100000).toFixed(2)}Lk`;
-            }
-            if (value >= 1000) {
-                return `₹ ${(value / 1000).toFixed(2)}K`;
-            }
-            return `₹ ${value.toFixed(2)}`;
-        }
-
-        function getStatusFromAchievement(percent) {
-            if (percent >= 100) return 'Ahead';
-            if (percent >= 85) return 'On Track';
-            if (percent >= 70) return 'Behind';
-            return 'At Risk';
-        }
-
-
-        function getStatusClass(status) {
-            switch (status) {
-                case 'Ahead': return 'ahead';
-                case 'On Track': return 'on-track';
-                case 'Behind': return 'behind';
-                case 'At Risk': return 'at-risk';
-                default: return 'at-risk';
-            }
-        }
-
-        const quarterMonthOrder = {
-            Q1: ['April', 'May', 'June'],
-            Q2: ['July', 'August', 'September'],
-            Q3: ['October', 'November', 'December'],
-            Q4: ['January', 'February', 'March']
-        };
-
-
-
-        function convertToQuarterWise(apiData) {
-
-            if (!Array.isArray(apiData)) return [];
-
-            const quarterMap = {};
-
-            apiData.forEach(item => {
-                const key = `${item.employee_id}-${item.year}-${item.quarter}`;
-                // console.log(key);
-
-                if (!quarterMap[key]) {
-                    const months = quarterMonthOrder[item.quarter] || [];
-
-                    quarterMap[key] = {
-                        id: `target-${Object.keys(quarterMap).length + 1}`,
-                        rep: item.employee_name,
-                        year: item.year,
-                        quarter: `${item.quarter} (${months.join('-')})`,
-
-                        totalTargetBusiness: 0,
-                        totalTargetMRR: 0,
-                        achievedBusiness: 0,
-                        achievedMRR: 0,
-                        months: {}
-                    };
-                }
-
-                quarterMap[key].months[item.month] = item;
-
-                quarterMap[key].totalTargetBusiness += Number(item.target_business || 0);
-                quarterMap[key].totalTargetMRR += Number(item.target_mrr || 0);
-                quarterMap[key].achievedBusiness += Number(item.achived_buisness || 0);
-                quarterMap[key].achievedMRR += Number(item.achived_mrr || 0);
-            });
-            // console.log("@@@@@@@@", quarterMap);
-            return Object.values(quarterMap).map(q => {
-                const qKey = q.quarter.split(' ')[0];
-                const order = quarterMonthOrder[qKey] || [];
-
-                const m1 = q.months[order[0]] || {};
-                const m2 = q.months[order[1]] || {};
-                const m3 = q.months[order[2]] || {};
-
-                const achievementPercent = q.totalTargetBusiness
-                    ? Math.round((q.achievedBusiness / q.totalTargetBusiness) * 100)
-                    : 0;
-
-                return {
-                    id: q.id,
-                    rep: q.rep,
-                    year: q.year,
-                    quarter: q.quarter,
-
-                    wholeTotalTarget: formatINR(q.totalTargetBusiness),
-                    targetMRR: formatINR(q.totalTargetMRR),
-
-                    wholeMonth1: formatINR(m1.target_business),
-                    wholeMonth2: formatINR(m2.target_business),
-                    wholeMonth3: formatINR(m3.target_business),
-
-                    mrrMonth1: formatINR(m1.target_mrr),
-                    mrrMonth2: formatINR(m2.target_mrr),
-                    mrrMonth3: formatINR(m3.target_mrr),
-
-                    achievedRevenue: formatINR(q.achievedBusiness),
-                    achievedMRR: formatINR(q.achievedMRR),
-
-                    achievement: `${achievementPercent}%`,
-                    status: getStatusFromAchievement(achievementPercent)
-                };
-            });
-        }
-
-
-
-
-
-
-        function renderTargetsTable(targets) {
-            // console.log(targets);
-
-            const tbody = document.querySelector('#targetsTable tbody');
-            tbody.innerHTML = targets.map((target, index) => `
-                <tr data-id="${target.id || index}" onclick="editTarget(${JSON.stringify(target).replace(/"/g, '&quot;')})">
-                    <td>${index + 1}</td>
-                    <td>${target.year}</td>
-                    <td>${target.quarter}</td>
-                    <td>${target.wholeTotalTarget || target.targetBusiness}</td>
-                    <td>${target.targetMRR}</td>
-                    <td style="text-align: center;">${target.wholeMonth1 || '-'}</td>
-                    <td style="text-align: center;">${target.wholeMonth2 || '-'}</td>
-                    <td style="text-align: center;">${target.wholeMonth3 || '-'}</td>
-                    <td style="text-align: center;">${target.mrrMonth1 || '-'}</td>
-                    <td style="text-align: center;">${target.mrrMonth2 || '-'}</td>
-                    <td style="text-align: center;">${target.mrrMonth3 || '-'}</td>
-                    <td>${target.achievedRevenue || target.achievedWhole}</td>
-                   
-                    <td>${target.achievedMRR}</td>
-                    <td>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <div class="progress-bar-custom">
-                                <div class="progress-fill" style="width: ${target.achievement}; background: ${getProgressColor(target.status)};"></div>
-                            </div>
-                            <span style="font-weight: 600;">${target.achievement}</span>
-                        </div>
-                    </td>
-                    <td><span class="badge ${getStatusClass(target.status)}">${target.status}</span></td>
-                    <td><button class="btn btn-sm btn-warning" onclick="event.stopPropagation(); manageTarget(${JSON.stringify(target).replace(/"/g, '&quot;')})">Manage</button></td>
-                </tr>
-            `).join('');
-        }
-
-        function getProgressColor(status) {
-            switch (status) {
-                case 'On Track': return '#10B981';
-                case 'Behind': return '#EF4444';
-                case 'At Risk': return '#F59E0B';
-                default: return '#10B981';
-            }
-        }
-
-        ////////////////////target sidebar
-        // Function to open team target sidebar
-        async function manageTarget(target) {
-            currentTeamTarget = target;
-
-            // Extract quarter and year
-            const quarterMatch = target.quarter?.match(/Q\d/);
-            const quarter = quarterMatch ? quarterMatch[0] : 'Q1';
-            const year = target.year || '2026';
-
-            // Update header
-            document.getElementById('teamTargetHeader').textContent =
-                `Team Targets of Quarter - ${quarter} of ${year}`;
-
-            // Show loading
-            document.getElementById('teamTargetLoading').style.display = 'block';
-            document.getElementById('teamTargetsTableContainer').style.display = 'none';
-            document.getElementById('teamTargetFormContainer').style.display = 'none';
-
-            // Populate dropdown
-            populateTeamMemberDropdown();
-
-            // Load existing team targets
-            await loadTeamTargets(quarter, year);
-
-            // Show sidebar
-            openTeamTargetSidebar();
-        }
-
-
-        function populateTeamMemberDropdown() {
-            const select = document.getElementById('teamMemberSelect');
-            select.innerHTML = '<option value="">Select Team Member</option>';
-
-            if (!Array.isArray(staffList)) return;
-
-            staffList.forEach(staff => {
-                const fullName = `${staff.firstname || ''} ${staff.lastname || ''}`.trim();
-
-                const option = document.createElement('option');
-                option.value = staff.id;
-                option.textContent = fullName || 'Unnamed';
-
-                select.appendChild(option);
-            });
-        }
-
-
-        // Function to load team targets from API
-        async function loadTeamTargets(quarter, year) {
-            try {
-                const tbody = document.getElementById('teamTargetsTableBody');
-                tbody.innerHTML = '';
-
-                // Show loading
-                document.getElementById('teamTargetLoading').style.display = 'block';
-                document.getElementById('teamTargetsTableContainer').style.display = 'none';
-
-                // API call
-                const response = await callApi('employee-sales-target');
-                console.log(response);
-                if (!response?.data || !Array.isArray(response.data)) {
-                    throw new Error('Invalid API response');
-                }
-
-                // ✅ FILTER DATA BY CONDITION
-                const filteredTargets = response.data.filter(item =>
-                    String(item.year) === String(year) &&
-                    String(item.quarter) === String(quarter)
-                );
-
-                // ✅ IF NO MATCHED DATA
-                if (filteredTargets.length === 0) {
-                    tbody.innerHTML = `
-                <tr>
-                    <td colspan="8" style="text-align:center; padding:40px; color:#6b7280;">
-                        No team targets found for ${quarter} ${year}
-                    </td>
-                </tr>
-            `;
-                } else {
-                    // ✅ RENDER MATCHED DATA ONLY
-                    filteredTargets.forEach((target, index) => {
-                        const row = document.createElement('tr');
-                        row.style.cursor = 'pointer';
-                        row.onclick = () => editTeamTarget(target);
-
-                        row.innerHTML = `
-                    <td style="padding:12px;">${index + 1}</td>
-                    <td style="padding:12px; font-weight:600;">
-                        ${target.employee_name || 'N/A'}
-                    </td>
-                    <td style="padding:12px;">${target.year}</td>
-                    <td style="padding:12px;">${target.quarter}</td>
-                    <td style="padding:12px; color:var(--primary-color); font-weight:600;">
-                        ${target.assigned_sales_target}
-                    </td>
-                    <td style="padding:12px;">${target.month_1 || 0}</td>
-                    <td style="padding:12px;">${target.month_2 || 0}</td>
-                    <td style="padding:12px;">${target.month_3 || 0}</td>
-                `;
-
-                        tbody.appendChild(row);
-                    });
-                }
-
-                // Show table
-                document.getElementById('teamTargetLoading').style.display = 'none';
-                document.getElementById('teamTargetsTableContainer').style.display = 'block';
-
-            } catch (error) {
-                console.error("Error loading team targets:", error);
-
-                document.getElementById('teamTargetLoading').style.display = 'none';
-                document.getElementById('teamTargetsTableContainer').innerHTML = `
-            <div style="text-align:center; padding:20px; color:#ef4444;">
-                Error loading team targets. Please try again.
-            </div>
-        `;
-            }
-        }
-
-        // Function to show team target form
-        function showTeamTargetForm() {
-            // Hide table and show form
-            document.getElementById('teamTargetsTableContainer').style.display = 'none';
-            document.getElementById('teamTargetFormContainer').style.display = 'block';
-
-            // Set default values from current target
-            if (currentTeamTarget) {
-                const quarterMatch = currentTeamTarget.quarter?.match(/Q\d/);
-                if (quarterMatch) {
-                    document.getElementById('targetQuarter').value = quarterMatch[0];
-                }
-                if (currentTeamTarget.year) {
-                    document.getElementById('targetYear').value = currentTeamTarget.year;
-                }
-            }
-        }
-
-        // Function to hide team target form
-        function hideTeamTargetForm() {
-            // Hide form and show table
-            document.getElementById('teamTargetFormContainer').style.display = 'none';
-            document.getElementById('teamTargetsTableContainer').style.display = 'block';
-        }
-
-        // Function to handle team target form submission
-        async function handleTeamTargetSubmit(event) {
-            event.preventDefault();
-
-            const employeeId = document.getElementById('teamMemberSelect').value;
-            const year = document.getElementById('targetYear').value;
-            const quarter = document.getElementById('targetQuarter').value;
-            const targetAmount = document.getElementById('targetAmount').value;
-
-            if (!employeeId || !year || !quarter || !targetAmount) {
-                softAlert('Please fill all required fields', 'warning');
-                return;
-            }
-
-            const payload = {
-                employee_id: employeeId,
-                year: year,
-                quarter: quarter,
-                assigned_sales_target: targetAmount
-            };
-
-            const submitBtn = event.target.querySelector('.btn-save');
-            const originalText = submitBtn.textContent;
-
-            try {
-                submitBtn.textContent = 'Updating...';
-                submitBtn.disabled = true;
-
-                const isEdit = !!window.currentEditingTarget;
-
-                const response = await callApi(
-                    'employee-sales-target',
-                    payload,
-                    isEdit ? 'PUT' : 'POST'
-                );
-
-                if (!response || response.status === false) {
-                    throw new Error(response?.message || 'Update failed');
-                }
-
-                // ✅ Soft alert on success
-                softAlert(
-                    `Team target ${isEdit ? 'updated' : 'added'} successfully`,
-                    'success'
-                );
-
-                // Reload table
-                await loadTeamTargets(quarter, year);
-
-                // Reset form & state
-                resetTeamTargetForm();
-
-            } catch (error) {
-                console.error(error);
-
-                // ❌ Soft alert on error
-                softAlert(error.message || 'Something went wrong', 'error');
-
-            } finally {
-                submitBtn.textContent = originalText;
-                submitBtn.disabled = false;
-            }
-        }
-
-
-        function resetTeamTargetForm() {
-            document.getElementById('teamTargetForm').reset();
-            document.getElementById('teamMemberSelect').disabled = false;
-            document.getElementById('targetYear').disabled = false;
-            document.getElementById('targetQuarter').disabled = false;
-
-            const submitBtn = document.querySelector('#teamTargetForm .btn-save');
-            submitBtn.textContent = 'Add Team Target';
-
-            window.currentEditingTarget = null;
-
-            hideTeamTargetForm();
-        }
-
-
-
-
-        // Function to add new team target to table
-        function addTeamTargetToTable(target) {
-            const tbody = document.getElementById('teamTargetsTableBody');
-            const rowCount = tbody.querySelectorAll('tr').length;
-            const isFirstRow = rowCount === 1 && tbody.querySelector('tr').colSpan === 8;
-
-            if (isFirstRow) {
-                // Clear the "no data" row
-                tbody.innerHTML = '';
-            }
-
-            const newRow = document.createElement('tr');
-            newRow.style.cursor = 'pointer';
-            newRow.onclick = () => editTeamTarget(target);
-
-            newRow.innerHTML = `
-        <td style="padding: 12px;">${isFirstRow ? 1 : rowCount + 1}</td>
-        <td style="padding: 12px; font-weight: 600;">${target.employee_name}</td>
-        <td style="padding: 12px;">${target.year}</td>
-        <td style="padding: 12px;">${target.quarter}</td>
-        <td style="padding: 12px; color: var(--primary-color); font-weight: 600;">${target.assigned_sales_target}</td>
-        <td style="padding: 12px;">${target.month_1}</td>
-        <td style="padding: 12px;">${target.month_2}</td>
-        <td style="padding: 12px;">${target.month_3}</td>
-        
-    `;
-
-            tbody.appendChild(newRow);
-        }
-
-        // Function to edit team target (placeholder)
-        function editTeamTarget(target) {
-            console.log("Edit team target:", target);
-
-            // Store currently editing target
-            window.currentEditingTarget = target;
-
-            // Prefill form
-            document.getElementById('teamMemberSelect').value = target.employee_id;
-            document.getElementById('targetYear').value = target.year;
-            document.getElementById('targetQuarter').value = target.quarter;
-            document.getElementById('targetAmount').value =
-                String(target.overall_target).replace(/[₹,]/g, '');
-
-            // Disable non-editable fields
-            document.getElementById('teamMemberSelect').disabled = true;
-            document.getElementById('targetYear').disabled = true;
-            document.getElementById('targetQuarter').disabled = true;
-
-            // Change button text
-            const submitBtn = document.querySelector('#teamTargetForm .btn-save');
-            submitBtn.textContent = 'Update Team Target';
-
-            // Show form
-            showTeamTargetForm();
-        }
-
-
-        // Function to open team target sidebar
-        function openTeamTargetSidebar() {
-            document.getElementById('teamTargetOverlay').classList.add('show');
-            document.getElementById('teamTargetSidebar').classList.add('show');
-        }
-
-        // Function to close team target sidebar
-        function closeTeamTargetSidebar() {
-            document.getElementById('teamTargetOverlay').classList.remove('show');
-            document.getElementById('teamTargetSidebar').classList.remove('show');
-            currentTeamTarget = null;
-        }
-
-        // Also update the table header in your HTML to include the Actions column:
-        // Add this to your targets table header (around line 1282 in your HTML):
-        // <th rowspan="3">ACTIONS</th>
-
-        // Add event listener for team target form submission
-        document.addEventListener('DOMContentLoaded', function () {
-            const teamTargetForm = document.getElementById('teamTargetForm');
-            if (teamTargetForm) {
-                teamTargetForm.addEventListener('submit', handleTeamTargetSubmit);
-            }
-        });
-
-
-
-        let currentTargetData = null;
-
-        function openEditModal(target = null) {
-            const modal = document.getElementById('editTargetModal');
-            modal.classList.add('show');
-            // console.log(target);
-
-            const title = document.getElementById('editTargetModalTitle');
-            const submitBtn = document.getElementById('editTargetSubmitBtn');
-
-            if (target) {
-                // EDIT MODE
-                currentTargetData = target;
-
-                title.textContent = 'Update Target';
-                submitBtn.textContent = 'Update Target';
-
-                document.getElementById('targetId').value = target.id || '';
-                document.getElementById('targetYear').value = target.year || '';
-
-                // Extract Q1/Q2/Q3/Q4
-                const quarterValue = target.quarter?.split(' ')[0];
-                document.getElementById('targetQuarter').value = quarterValue || '';
-
-                document.getElementById('wholeTotalTarget').value =
-                    parseAmount(target.wholeTotalTarget);
-
-            } else {
-                // ADD MODE
-                currentTargetData = null;
-
-                title.textContent = 'Add Target';
-                submitBtn.textContent = 'Save Target';
-
-                document.getElementById('editTargetForm').reset();
-            }
-        }
-
-
-        function closeEditModal() {
-            const modal = document.getElementById('editTargetModal');
-            modal.classList.remove('show');
-            currentTargetData = null;
-        }
-
-        function parseAmount(amountStr) {
-            if (typeof amountStr === 'number') return amountStr;
-            if (!amountStr) return 0;
-            const cleaned = amountStr.replace(/[₹,\s]/g, '');
-            if (cleaned.includes('Lk') || cleaned.includes('L')) {
-                return parseFloat(cleaned.replace(/Lk|L/g, '')) * 100000;
-            }
-            if (cleaned.includes('K')) {
-                return parseFloat(cleaned.replace('K', '')) * 1000;
-            }
-            return parseFloat(cleaned) || 0;
-        }
-
-        function editTarget(target) {
-            // console.log(target);
-            openEditModal(target);
-        }
-
-        async function saveTarget(event) {
-            event.preventDefault();
-
-            const form = document.getElementById('editTargetForm');
-            if (!form.checkValidity()) {
-                form.reportValidity();
-                return;
-            }
-
-            const year = document.getElementById('targetYear').value;
-            const quarter = document.getElementById('targetQuarter').value;
-            const wholeTotalTarget = document.getElementById('wholeTotalTarget').value;
-
-            const data = {
-                year: year,
-                quarter: quarter,
-                total_sales_target: wholeTotalTarget
-            };
-
-            const isEdit = !!currentTargetData;
-            const method = isEdit ? 'PUT' : 'POST';
-
-            try {
-                const response = await callApi('sales-target', data, method);
-
-                if (response && response.rcode === 'success') {
-                    closeEditModal();
-                    loadDashboard_new();
-
-                    softAlert(
-                        `Target ${isEdit ? 'updated' : 'saved'} successfully`,
-                        'success'
-                    );
-
-                } else {
-                    softAlert(
-                        response?.rmessage || 'Something went wrong',
-                        'error'
-                    );
-                }
-
-            } catch (error) {
-                console.error(error);
-                softAlert('Error saving target', 'error');
-            }
-        }
-
-
-
-
-
-        // ============ TASKS FILTER FUNCTIONS ============
-        function toggleTasksFilter() {
-            const filterForm = document.getElementById('tasksFilterForm');
-            if (filterForm.style.display === 'none' || filterForm.style.display === '') {
-                filterForm.style.display = 'block';
-            } else {
-                filterForm.style.display = 'none';
-            }
-        }
-        function getMainFilters() {
-            return {
-                sales_person: document.getElementById('sales_person').value,
-                date_from: document.getElementById('date_from').value,
-                date_to: document.getElementById('date_to').value
-            };
-        }
-
-        async function applyTasksFilter() {
-            // Get filter values
-            currentTaskFilters = {
-                department: document.getElementById('filterDepartment').value,
-                status: document.getElementById('filterStatus').value,
-                ref_type: document.getElementById('filterRefType').value,
-                ref_id: document.getElementById('filterRefId').value
-            };
-
-            // Load filtered tasks
-            await loadFilteredTasks();
-        }
-
-        function clearTasksFilter() {
-            // Reset form fields
-            document.getElementById('filterDepartment').value = '';
-            document.getElementById('filterStatus').value = '';
-            document.getElementById('filterRefType').value = '';
-            document.getElementById('filterRefId').value = '';
-
-            // Reset filter variables
-            currentTaskFilters = {
-                department: '',
-                status: '',
-                ref_type: '',
-                ref_id: ''
-            };
-            currentCategory = '';
-
-            // Reload tasks with only main filters
-            loadTasksWithMainFilters();
-        }
-
-
         async function loadTasksWithMainFilters() {
             try {
-                // Get main filters
                 mainFilters = getMainFilters();
-
                 let params = {
                     mytickets: 0,
                     status: 24
                 };
 
-                // Add main filters
                 if (mainFilters.sales_person) {
                     params.followup_admin = mainFilters.sales_person;
                 }
@@ -6064,11 +5405,9 @@ $staffList = $person['available_staff'] ?? [];
                     params.date_end = mainFilters.date_to;
                 }
 
-                console.log('Main Filter API Parameters:', params); // Debug log
-
                 const data = await callApi("followup", params);
                 filteredTasks = data?.followups || [];
-                allTasks = filteredTasks; // Update allTasks
+                allTasks = filteredTasks;
                 currentPage = 1;
                 renderTasks(currentPage);
             } catch (error) {
@@ -6076,103 +5415,270 @@ $staffList = $person['available_staff'] ?? [];
             }
         }
 
-        async function loadTasksData() {
-            // Load initial tasks with main filters
-            await loadTasksWithMainFilters();
-        }
-
-        // Also update the main report button to refresh tasks when clicked
-        document.addEventListener("DOMContentLoaded", function () {
-            // Get Report Button click handler
-            document.getElementById("getReportBtn").addEventListener("click", function (e) {
-                e.preventDefault();
-
-                // Update main filters
-                mainFilters = getMainFilters();
-
-                // If tasks are visible, reload them with new main filters
-                const tasksTableWrapper = document.getElementById('tasksTableWrapper');
-                if (tasksTableWrapper.style.display === 'block') {
-                    // If there are task filters applied, reload with both filters
-                    if (currentTaskFilters.department || currentTaskFilters.status ||
-                        currentTaskFilters.ref_type || currentTaskFilters.ref_id) {
-                        loadFilteredTasks();
-                    } else if (currentCategory) {
-                        // If a category is selected, reload with category and main filters
-                        filterTasksByCategory(currentCategory);
-                    } else {
-                        // Otherwise just reload with main filters
-                        loadTasksWithMainFilters();
-                    }
-                }
-            });
-        });
-
-        // console.log(mainFilters);
-
-        // Add this logout function to your main JavaScript in sales-dashboard.php
-async function logout() {
-    try {
-        // Show confirmation dialog
-        const confirmLogout = confirm("Are you sure you want to logout?");
-        if (!confirmLogout) return;
-
-        // Show loader
-        showLoader('Logging out...');
-
-        // Clear any authentication tokens from localStorage/sessionStorage
-        localStorage.removeItem('auth_token');
-        sessionStorage.removeItem('auth_token');
-        localStorage.removeItem('api_key');
-        sessionStorage.removeItem('api_key');
-
-        // Clear any user data
-        localStorage.removeItem('user_data');
-        sessionStorage.removeItem('user_data');
-
-        // If you're using cookies, you can also clear them
-        document.cookie = "auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-        document.cookie = "api_key=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-
-        // Show success message
-        softAlert('Logged out successfully!', 'success', 2000);
-
-        // Wait a moment before redirecting
-        setTimeout(() => {
-            // Correct the redirect path
-            window.location.href = 'http://flowaura_dev.local/login/login.php';
-        }, 1500);
-
-    } catch (error) {
-        console.error('Logout error:', error);
-        softAlert('Error during logout', 'error');
-        hideLoader();
-    }
-}
-
-
-        async function loadAllTasks() {
+        // ============ LOGOUT FUNCTION ============
+        async function logout() {
             try {
-                const data = await callApi("followup", { status: 24 });
-                filteredTasks = data?.followups || [];
-                allTasks = filteredTasks;
-                currentPage = 1;
-                renderTasks(currentPage);
+                const confirmLogout = confirm("Are you sure you want to logout?");
+                if (!confirmLogout) return;
+
+                showLoader('Logging out...');
+
+                const envs = ['dev', 'prod'];
+                envs.forEach(env => {
+                    sessionStorage.removeItem(`auth_token_${env}`);
+                    sessionStorage.removeItem(`username_${env}`);
+                    localStorage.removeItem(`auth_token_${env}`);
+                    localStorage.removeItem(`username_${env}`);
+                });
+
+                sessionStorage.removeItem('auth_token');
+                sessionStorage.removeItem('username');
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('username');
+
+                localStorage.removeItem('user_data');
+                sessionStorage.removeItem('user_data');
+
+                document.cookie.split(";").forEach(function (c) {
+                    document.cookie = c.replace(/^ +/, "")
+                        .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+                });
+
+                document.cookie = "envType=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+
+                softAlert('Logged out successfully!', 'success', 2000);
+
+                setTimeout(() => {
+                    window.location.href = '/login/login.php';
+                }, 1500);
+
             } catch (error) {
-                console.error("Error loading tasks:", error);
+                console.error('Logout error:', error);
+                softAlert('Error during logout', 'error');
+                hideLoader();
             }
         }
 
-        // Update the initial loadTasksData function
-        async function loadTasksData() {
-            // Load initial tasks
-            await loadAllTasks();
+        // ============ UI HELPER FUNCTIONS ============
+        function softAlert(message, type = 'success', duration = 3000) {
+            const alert = document.createElement('div');
+            alert.className = `soft-alert ${type}`;
+            alert.textContent = message;
+
+            document.body.appendChild(alert);
+
+            setTimeout(() => alert.classList.add('show'), 50);
+            setTimeout(() => {
+                alert.classList.remove('show');
+                setTimeout(() => alert.remove(), 300);
+            }, duration);
         }
 
-        // Load dashboard on page load
-        // document.addEventListener('DOMContentLoaded', loadDashboard);
-        document.addEventListener('DOMContentLoaded', loadDashboard_new);
+        function showLoader(text = 'Loading...') {
+            const loader = document.getElementById('globalLoader');
+            const loaderText = document.getElementById('loaderText');
+
+            if (loader && loaderText) {
+                loaderText.textContent = text;
+                loader.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function hideLoader() {
+            const loader = document.getElementById('globalLoader');
+            if (loader) {
+                loader.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+
+        function setButtonLoading(button, isLoading) {
+            if (!button) return;
+            if (isLoading) {
+                button.classList.add('btn-loading');
+                button.disabled = true;
+            } else {
+                button.classList.remove('btn-loading');
+                button.disabled = false;
+            }
+        }
+
+        // ============ EVENT LISTENER SETUP ============
+        function setupEventListeners() {
+            // Team target form submission
+            const teamTargetForm = document.getElementById('teamTargetForm');
+            if (teamTargetForm) {
+                teamTargetForm.addEventListener('submit', handleTeamTargetSubmit);
+            }
+
+            // Logout buttons
+            const logoutBtn = document.querySelector('[onclick*="logout"]');
+            if (logoutBtn) {
+                logoutBtn.removeAttribute('onclick');
+                logoutBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    logout();
+                });
+            }
+
+            // Report button
+            const reportBtn = document.getElementById('getReportBtn');
+            if (reportBtn) {
+                reportBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const formData = getFormData();
+                    loadKPIReport(formData);
+
+                    // Refresh tasks if visible
+                    const tasksTableWrapper = document.getElementById('tasksTableWrapper');
+                    if (tasksTableWrapper.style.display === 'block') {
+                        if (currentTaskFilters.department || currentTaskFilters.status ||
+                            currentTaskFilters.ref_type || currentTaskFilters.ref_id) {
+                            loadFilteredTasks();
+                        } else if (currentCategory) {
+                            filterTasksByCategory(currentCategory);
+                        } else {
+                            loadTasksWithMainFilters();
+                        }
+                    }
+                });
+            }
+
+            // Set initial dates
+            const today = new Date();
+            const month = today.getMonth() + 1;
+            const year = today.getFullYear();
+
+            let startDate = "";
+            let endDate = "";
+
+            if (month >= 4 && month <= 6) {
+                startDate = `${year}-04-01`;
+                endDate = `${year}-06-30`;
+            } else if (month >= 7 && month <= 9) {
+                startDate = `${year}-07-01`;
+                endDate = `${year}-09-30`;
+            } else if (month >= 10 && month <= 12) {
+                startDate = `${year}-10-01`;
+                endDate = `${year}-12-31`;
+            } else {
+                startDate = `${year}-01-01`;
+                endDate = `${year}-03-31`;
+            }
+
+            document.getElementById("date_from").value = startDate;
+            document.getElementById("date_to").value = endDate;
+        }
+
+        // ============ INITIALIZE DASHBOARD ============
+        document.addEventListener('DOMContentLoaded', function () {
+            initDashboard();
+        });
     </script>
+    <script>
+        async function setSalesPersonDropdown() {
+            const admin = await getLoggedAdmin();
+            if (!admin) return;
+
+            const select = document.getElementById('sales_person');
+
+            select.innerHTML = `
+            <option value="all">All Sales Persons</option>
+        `;
+
+            // Add current admin
+            const option = document.createElement("option");
+            option.value = admin.id;
+            option.textContent = admin.firstname || admin.username || `User ${admin.id}`;
+            option.selected = true;
+            select.appendChild(option);
+
+            // Also populate with other staff members from staffList if available
+            if (staffList && staffList.length > 0) {
+                staffList.forEach(staff => {
+                    if (staff.id !== admin.id) {
+                        const staffOption = document.createElement("option");
+                        staffOption.value = staff.id;
+                        const fullName = getStaffFullName(staff);
+                        staffOption.textContent = fullName;
+                        select.appendChild(staffOption);
+                    }
+                });
+            }
+
+            // Load initial dashboard data for the logged-in admin
+            await loadDashboardData(admin.id);
+        }
+
+        async function loadDashboardData(userId) {
+            if (!userId) {
+                console.error("No user ID provided");
+                return;
+            }
+
+            try {
+                showLoader('Loading dashboard data...');
+
+                // Get current date values from the form
+                const date_from = document.getElementById('date_from').value;
+                const date_to = document.getElementById('date_to').value;
+
+                // Convert dates to proper format
+                const formattedDateFrom = convertToDMY(date_from);
+                const formattedDateTo = convertToDMY(date_to);
+
+                // Set the sales person dropdown to the selected user
+                const select = document.getElementById('sales_person');
+                if (select) {
+                    select.value = userId;
+                }
+
+                // Prepare form data with the selected user
+                const formData = {
+                    sales_person: userId,
+                    date_from: formattedDateFrom,
+                    date_to: formattedDateTo
+                };
+
+                // Use the existing loadKPIReport function to load data
+                await loadKPIReport(formData);
+
+                // Also load follow-ups and tasks for this user
+                await loadTasksWithMainFilters();
+
+                softAlert(`Dashboard loaded for selected user`, 'success');
+
+            } catch (error) {
+                console.error("Error loading dashboard data:", error);
+                softAlert('Error loading dashboard data', 'error');
+            } finally {
+                hideLoader();
+            }
+        }
+
+        // AUTO LOAD AFTER LOGIN
+        document.addEventListener("DOMContentLoaded", () => {
+            // Initialize the dashboard first
+            initDashboard().then(() => {
+                // Then set the sales person dropdown with logged-in admin
+                setSalesPersonDropdown();
+            });
+        });
+
+        // ON CHANGE - Update to use the existing dashboard loading system
+        document.getElementById("sales_person").addEventListener("change", function () {
+            if (this.value === "all") {
+                // If "All Sales Persons" is selected, use the original report loading
+                const formData = getFormData();
+                loadKPIReport(formData);
+            } else {
+                // If a specific user is selected, use the new function
+                loadDashboardData(this.value);
+            }
+        });
+    </script>
+
 </body>
 
 </html>
