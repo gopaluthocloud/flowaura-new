@@ -2873,7 +2873,8 @@
 
                 // Setup initial report
                 const initialFormData = getFormData();
-                await loadKPIReport(initialFormData);
+                // console.log(initialFormData);
+                // await loadKPIReport(initialFormData);
 
                 // Setup event listeners
                 setupEventListeners();
@@ -5085,7 +5086,7 @@
                         ref_id: currentContactId
                     });
                     populateActivityTab(activities);
-                    alert("Follow-up added successfully!");
+                    softAlert("Follow-up added successfully!",'success',2000);
                 } else {
                     alert("Error adding follow-up: " + (response.rmessage || "Unknown error"));
                 }

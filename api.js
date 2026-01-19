@@ -83,7 +83,7 @@ function getAuthToken() {
 
     // If token found, return it
     if (token) {
-        console.log("Auth token retrieved from storage");
+        // console.log("Auth token retrieved from storage");
         return token;
     }
 
@@ -91,7 +91,7 @@ function getAuthToken() {
     const urlParams = new URLSearchParams(window.location.search);
     const urlToken = urlParams.get("token");
     if (urlToken) {
-        console.log("Auth token retrieved from URL");
+        // console.log("Auth token retrieved from URL");
         return urlToken;
     }
 
@@ -114,7 +114,7 @@ function getAuthToken() {
 
     // If token found, return it
     if (token) {
-        console.log(`Auth token retrieved for ${getCurrentEnv()} environment`);
+        // console.log(`Auth token retrieved for ${getCurrentEnv()} environment`);
         return token;
     }
 
@@ -122,7 +122,7 @@ function getAuthToken() {
     const urlParams = new URLSearchParams(window.location.search);
     const urlToken = urlParams.get("token");
     if (urlToken) {
-        console.log("Auth token retrieved from URL");
+        // console.log("Auth token retrieved from URL");
         return urlToken;
     }
 
@@ -271,7 +271,7 @@ async function callApi(endpoint, params = {}, method = "GET") {
         }
 
         let url = `${API_BASE}/${endpoint}`;
-        console.log(url);
+        // console.log(url);
 
         const options = {
             method,
